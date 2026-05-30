@@ -2,432 +2,561 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <meta name="theme-color" content="#1A3557"/>
-<meta name="description" content="Dcode Ward History - Smart History. Better Diagnosis. By Maria Sultana Hira"/>
-<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Dcode Ward"/>
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="icon-180.png"/>
 <title>Dcode Ward History</title>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#F0F4F8;font-family:Georgia,serif;}
-#root{min-height:100vh;}
-textarea:focus,select:focus,input:focus{outline:2px solid #2E8B8B;outline-offset:1px;}
+body{font-family:Georgia,serif;background:#F0F4F8;color:#1E2D3D;}
+button{cursor:pointer;}
 button:active{transform:scale(0.97);}
-::-webkit-scrollbar{width:6px;}
-::-webkit-scrollbar-track{background:#F0F4F8;}
+textarea,input,select{font-family:Georgia,serif;outline:none;}
+textarea:focus,input:focus,select:focus{outline:2px solid #2E8B8B;}
+::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:#DCE8F0;border-radius:10px;}
-@media print{header,footer,button{display:none!important;}}
+
+/* Header */
+.header{background:linear-gradient(135deg,#1A3557,#1E4976);padding:14px 16px 10px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(26,53,87,.3);}
+.logo-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:12px;padding:7px 11px;font-size:22px;}
+.logo-title{font-size:17px;font-weight:bold;font-family:monospace;color:#fff;}
+.logo-sub{font-size:9px;color:rgba(255,255,255,.6);font-family:monospace;}
+.header-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.lang-toggle{display:flex;background:rgba(255,255,255,.1);border-radius:20px;padding:3px;gap:2px;}
+.lang-btn{padding:3px 10px;border-radius:16px;border:none;font-size:10px;font-weight:bold;cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:#fff;color:#1A3557;}
+.lang-btn:not(.active){background:transparent;color:rgba(255,255,255,.75);}
+.header-btn{padding:5px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;font-size:11px;font-family:monospace;}
+.login-btn{padding:5px 14px;background:rgba(255,255,255,.95);border:none;color:#1A3557;border-radius:20px;font-size:11px;font-family:monospace;font-weight:bold;}
+.user-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;}
+.user-badge span{font-size:11px;color:#fff;font-family:monospace;}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,.5);font-size:10px;font-family:monospace;}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.tab-btn{padding:5px 14px;border-radius:20px;border:none;font-size:11px;font-family:monospace;transition:all .2s;}
+.tab-btn.active{background:#fff;color:#1A3557;font-weight:bold;}
+.tab-btn:not(.active){background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+
+/* Main */
+.main{max-width:900px;margin:0 auto;padding:20px 14px 50px;}
+
+/* Toast */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1A3557;color:#fff;border:1px solid #2E8B8B;padding:9px 22px;border-radius:28px;z-index:3000;font-family:monospace;font-size:12px;box-shadow:0 5px 20px rgba(0,0,0,.15);white-space:nowrap;}
+
+/* Progress */
+.progress-row{display:flex;justify-content:space-between;font-size:10px;font-family:monospace;color:#6B8299;margin-bottom:5px;}
+.progress-bar{height:6px;background:#DCE8F0;border-radius:10px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:10px;transition:width .4s;}
+
+/* Pills */
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0;}
+.pill{padding:5px 14px;border-radius:20px;border:2px solid;font-size:11px;font-weight:bold;font-family:monospace;transition:all .2s;}
+
+/* Step card */
+.step-card{background:#fff;border-radius:18px;box-shadow:0 6px 24px rgba(26,53,87,.1);overflow:hidden;margin-bottom:16px;border:1px solid #DCE8F0;}
+.step-header{padding:20px 22px;}
+.step-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.step-icon-box{display:flex;align-items:center;gap:12px;}
+.step-icon{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3);border-radius:14px;padding:8px 12px;font-size:26px;}
+.step-code{font-size:9px;font-family:monospace;color:rgba(255,255,255,.8);letter-spacing:3px;margin-bottom:2px;}
+.step-title{font-size:18px;font-weight:bold;color:#fff;}
+.step-title-bn{font-size:12px;color:rgba(255,255,255,.85);margin-top:2px;}
+.step-subtitle{margin:10px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,.9);}
+.pronounce-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:7px 12px;flex-shrink:0;font-size:11px;font-family:monospace;}
+.step-body{padding:20px;}
+
+/* Questions */
+.q-label{font-family:monospace;font-size:9px;color:#6B8299;letter-spacing:3px;margin-bottom:10px;text-transform:uppercase;}
+.questions{display:flex;flex-direction:column;gap:9px;}
+.q-item{display:flex;gap:10px;padding:11px 14px;border-radius:11px;border-left:4px solid;align-items:flex-start;}
+.q-num{border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;flex-shrink:0;margin-top:2px;color:#fff;}
+.q-en{font-size:13px;font-style:italic;line-height:1.5;}
+.q-bn{font-size:12px;line-height:1.5;margin-top:2px;}
+.q-speak{background:none;border:none;font-size:14px;opacity:.5;flex-shrink:0;}
+
+/* Tip */
+.tip-box{background:#FFFBF0;border:1px solid #F5D87A;border-radius:11px;padding:12px 16px;margin-top:16px;}
+.tip-label{font-family:monospace;font-size:9px;color:#B7841A;letter-spacing:3px;margin-bottom:5px;}
+.tip-en{font-size:13px;color:#5C4A00;line-height:1.7;margin:0;}
+.tip-bn{font-size:12px;color:#7A6010;line-height:1.7;margin:5px 0 0;}
+
+/* Mnemonic */
+.mnem-btn{display:flex;align-items:center;gap:8px;border:2px solid;border-radius:11px;padding:10px 16px;width:100%;text-align:left;margin-top:16px;font-family:monospace;font-weight:bold;font-size:12px;}
+.mnem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px;}
+.mnem-item{border:1.5px solid;border-radius:11px;padding:10px 8px;text-align:center;}
+.mnem-letter{font-family:monospace;font-size:20px;font-weight:bold;}
+.mnem-word{font-size:10px;color:#6B8299;margin-top:2px;}
+.mnem-tap{font-size:9px;margin-top:3px;opacity:.7;}
+
+/* Nav */
+.nav-row{display:flex;gap:10px;justify-content:space-between;margin-top:16px;}
+.nav-back{padding:10px 20px;border-radius:11px;border:2px solid #DCE8F0;background:#fff;font-family:monospace;font-weight:bold;font-size:12px;}
+.nav-next{padding:10px 24px;border-radius:11px;border:none;color:#fff;font-family:monospace;font-weight:bold;font-size:12px;}
+
+/* Flow map */
+.flow-map{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 3px 14px rgba(26,53,87,.07);border:1px solid #DCE8F0;margin-top:20px;}
+.flow-label{font-family:monospace;font-size:9px;color:#6B8299;letter-spacing:3px;margin-bottom:12px;text-transform:uppercase;}
+.flow-row{display:flex;align-items:center;flex-wrap:wrap;gap:5px;}
+.flow-item{display:flex;flex-direction:column;align-items:center;gap:3px;border:2px solid;border-radius:11px;padding:8px 10px;min-width:52px;transition:all .2s;}
+.flow-emoji{font-size:16px;}
+.flow-code{font-family:monospace;font-size:9px;font-weight:bold;}
+.flow-line{width:12px;height:2px;background:#DCE8F0;flex-shrink:0;}
+
+/* Practice */
+.score-box{background:#fff;border:2px solid #4CAF7D;border-radius:12px;padding:7px 18px;text-align:center;}
+.score-label{font-family:monospace;font-size:10px;color:#6B8299;}
+.score-val{font-family:monospace;font-size:20px;font-weight:bold;color:#4CAF7D;}
+.scenario-box{font-size:15px;line-height:1.7;background:#F7FAFC;border-radius:11px;padding:14px 18px;border:1px solid #DCE8F0;margin:0 0 18px;}
+.reveal-btn{width:100%;padding:13px;border:none;border-radius:11px;color:#fff;font-weight:bold;font-size:13px;font-family:monospace;}
+.answer-box{background:#EAF6EF;border:1.5px solid #4CAF7D;border-radius:11px;padding:14px 18px;font-size:14px;line-height:1.7;color:#2D6A4F;margin-bottom:16px;}
+.got-it{flex:1;padding:11px;background:#EAF6EF;border:2px solid #4CAF7D;color:#4CAF7D;border-radius:11px;font-family:monospace;font-weight:bold;font-size:12px;}
+.need-more{flex:1;padding:11px;background:#FAEAEE;border:2px solid #D95F7A;color:#D95F7A;border-radius:11px;font-family:monospace;font-weight:bold;font-size:12px;}
+.scenarios-list{background:#fff;border-radius:14px;border:1px solid #DCE8F0;overflow:hidden;}
+.scenarios-header{padding:11px 18px;border-bottom:1px solid #DCE8F0;font-family:monospace;font-size:10px;color:#6B8299;letter-spacing:2px;background:#F7FAFC;}
+.scenario-row{padding:11px 18px;border-bottom:1px solid #DCE8F0;display:flex;align-items:center;gap:10px;transition:background .2s;}
+
+/* Community */
+.post-box{background:#fff;border-radius:14px;border:1px solid #DCE8F0;padding:20px;margin-bottom:18px;}
+.idea-card{background:#fff;border-radius:12px;padding:18px;border:1px solid #DCE8F0;margin-bottom:10px;}
+.idea-tag{color:#fff;border-radius:5px;padding:2px 10px;font-family:monospace;font-size:10px;font-weight:bold;}
+.like-btn{display:flex;align-items:center;gap:5px;border-radius:18px;padding:4px 12px;font-size:12px;font-family:monospace;border:1px solid;}
+
+/* Notepad */
+.note-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #DCE8F0;margin-bottom:12px;}
+.note-header{padding:9px 16px;display:flex;align-items:center;gap:7px;}
+.save-banner{background:#FFFBF0;border:1px solid #F5D87A;border-radius:11px;padding:11px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+
+/* Login */
+.login-card{background:#fff;border:1px solid #DCE8F0;border-radius:18px;padding:30px;width:100%;max-width:400px;box-shadow:0 8px 36px rgba(26,53,87,.12);}
+.login-center{display:flex;align-items:center;justify-content:center;min-height:55vh;}
+.err-box{background:#FEE8ED;border:1px solid #F8B4C2;color:#D95F7A;border-radius:7px;padding:7px 12px;font-size:11px;margin-bottom:12px;text-align:center;}
+.login-submit{width:100%;padding:12px;background:linear-gradient(135deg,#1A3557,#1E4976);border:none;border-radius:11px;color:#fff;font-weight:bold;font-size:14px;font-family:monospace;box-shadow:0 4px 16px rgba(26,53,87,.25);}
+
+/* Print modal */
+.print-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:14px;}
+.print-inner{background:#fff;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.print-header{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:#1A3557;border-radius:16px 16px 0 0;}
+.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.print-step{border:2px solid;border-radius:9px;overflow:hidden;}
+.print-step-header{padding:7px 11px;display:flex;gap:7px;align-items:center;}
+.print-step-body{padding:9px 11px;background:#fafafa;}
+
+/* Footer */
+.footer{text-align:center;padding:14px;font-family:monospace;font-size:10px;color:#6B8299;border-top:1px solid #DCE8F0;background:#fff;}
+
+/* Input */
+.inp{width:100%;padding:10px 13px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;font-family:Georgia,serif;margin-bottom:11px;box-sizing:border-box;}
+.sel{width:100%;padding:9px 12px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:12px;font-family:monospace;margin-bottom:10px;box-sizing:border-box;}
+.ta{width:100%;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;font-family:Georgia,serif;resize:vertical;box-sizing:border-box;padding:10px 12px;}
+.post-btn{padding:9px 22px;background:linear-gradient(135deg,#1A3557,#1E4976);color:#fff;border:none;border-radius:9px;font-family:monospace;font-weight:bold;font-size:12px;}
+.copy-btn{padding:8px 18px;color:#fff;border:none;border-radius:9px;font-family:monospace;font-size:11px;font-weight:bold;transition:background .3s;}
+
+@media print{header,.tabs,.nav-row,.footer,button{display:none!important;}}
 </style>
 </head>
 <body>
-<div id="root"></div>
+<div id="app"></div>
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
-}
-</script>
-<script>
-const C={bg:"#F0F4F8",surface:"#FFFFFF",card:"#FFFFFF",border:"#DCE8F0",navy:"#1A3557",teal:"#2E8B8B",cyan:"#3AAFCF",lime:"#4CAF7D",amber:"#F5A623",rose:"#D95F7A",purple:"#7B6FCC",orange:"#E07B4A",text:"#1E2D3D",muted:"#6B8299",lightBg:"#F7FAFC"};
+// ── DATA ──────────────────────────────────────────────────────
+const C={navy:"#1A3557",teal:"#2E8B8B",cyan:"#3AAFCF",lime:"#4CAF7D",amber:"#F5A623",rose:"#D95F7A",purple:"#7B6FCC",orange:"#E07B4A",muted:"#6B8299",border:"#DCE8F0",lightBg:"#F7FAFC"};
 
 const STEPS=[
   {id:"pc",code:"PC",emoji:"🩺",color:C.teal,light:"#E8F6F6",title:"Presenting Complaint",title_bn:"প্রধান অভিযোগ",subtitle:"Chief reason — in the patient's own words",subtitle_bn:"রোগীর নিজের ভাষায় আসার কারণ",audio:"Presenting Complaint",
    prompts:[{en:"What brings you in today?",bn:"আজ কী সমস্যা নিয়ে এসেছেন?"},{en:"What is the main problem you are experiencing?",bn:"আপনার প্রধান সমস্যাটি কী?"},{en:"How long have you had this problem?",bn:"কতদিন ধরে এই সমস্যা?"}],
-   tip:{en:"Use open-ended questions. Let the patient speak first without interrupting.",bn:"উন্মুক্ত প্রশ্ন করুন। রোগীকে প্রথমে কথা বলতে দিন।"},mnemonics:[],
-   practice:[{scenario:"A 45-year-old man walks in holding his chest.",answer:"Start with: 'What brings you in today?' — let him describe in his own words before asking specifics."},{scenario:"An elderly woman says 'I don't feel well.'",answer:"Ask: 'Can you tell me more about what you're feeling?' — avoid yes/no questions at this stage."}]},
+   tip:{en:"Use open-ended questions. Let the patient speak first.",bn:"উন্মুক্ত প্রশ্ন করুন। রোগীকে প্রথমে কথা বলতে দিন।"},mnemonics:[],
+   practice:[{scenario:"A 45-year-old man walks in holding his chest.",answer:"Start with 'What brings you in today?' — let him describe in his own words first."},{scenario:"An elderly woman says 'I don't feel well.'",answer:"Ask 'Can you tell me more about what you're feeling?' — avoid yes/no questions."}]},
   {id:"hpc",code:"HPC",emoji:"🔬",color:C.cyan,light:"#EAF6FB",title:"History of Presenting Complaint",title_bn:"বর্তমান অভিযোগের ইতিহাস",subtitle:"Deep-dive using SOCRATES framework",subtitle_bn:"SOCRATES পদ্ধতিতে বিশ্লেষণ",audio:"History of Presenting Complaint",
    prompts:[{en:"When exactly did it start?",bn:"এটা ঠিক কখন শুরু হয়েছিল?"},{en:"Did it come on suddenly or gradually?",bn:"হঠাৎ নাকি আস্তে আস্তে?"},{en:"What makes it better or worse?",bn:"কিসে ভালো বা খারাপ হয়?"},{en:"Rate severity 1-10.",bn:"১ থেকে ১০ এ কতটুকু?"}],
    tip:{en:"Always ask about associated symptoms — never stop at the chief complaint.",bn:"সংশ্লিষ্ট উপসর্গ সম্পর্কে সবসময় জিজ্ঞেস করুন।"},
    mnemonics:[{name:"SOCRATES",items:["Site","Onset","Character","Radiation","Associations","Time course","Exacerbating/Relieving","Severity"]}],
-   practice:[{scenario:"Patient says: 'I have chest pain.'",answer:"Use SOCRATES — Site? Onset? Character? Radiation to arm/jaw? Associated symptoms? What makes it worse?"},{scenario:"Patient says: 'I have a headache.'",answer:"Ask: How long? Where exactly? Throbbing? Does light bother you? Any nausea? Neck stiffness?"}]},
+   practice:[{scenario:"Patient says: 'I have chest pain.'",answer:"Use SOCRATES — Site? Onset? Character? Radiation to arm/jaw? What makes it worse?"},{scenario:"Patient says: 'I have a headache.'",answer:"How long? Where? Throbbing? Light sensitivity? Nausea? Neck stiffness?"}]},
   {id:"pmh",code:"PMH",emoji:"📋",color:C.lime,light:"#EAF6EF",title:"Past Medical History",title_bn:"পূর্ববর্তী চিকিৎসা ইতিহাস",subtitle:"Previous illnesses, surgeries, hospitalizations",subtitle_bn:"আগের রোগ, অপারেশন ও হাসপাতাল ভর্তি",audio:"Past Medical History",
    prompts:[{en:"Any known medical conditions?",bn:"পরিচিত কোনো রোগ আছে?"},{en:"Ever been admitted to hospital?",bn:"কখনো হাসপাতালে ভর্তি হয়েছেন?"},{en:"Any previous operations?",bn:"কোনো অপারেশন হয়েছে?"}],
-   tip:{en:"Ask specifically about DM, HTN, TB, Asthma — patients often forget chronic conditions.",bn:"ডায়াবেটিস, উচ্চ রক্তচাপ, যক্ষ্মা সরাসরি জিজ্ঞেস করুন।"},
+   tip:{en:"Ask specifically about DM, HTN, TB, Asthma — patients forget chronic conditions.",bn:"ডায়াবেটিস, উচ্চ রক্তচাপ, যক্ষ্মা সরাসরি জিজ্ঞেস করুন।"},
    mnemonics:[{name:"MJ THREADS",items:["MI","Jaundice","TB","HTN","Rheumatic fever","Epilepsy","Asthma","Diabetes","Stroke"]}],
-   practice:[{scenario:"Patient denies any past illnesses.",answer:"Probe specifically: 'Any blood pressure issues? Diabetes? TB or jaundice?' Direct questions unlock forgotten history."}]},
+   practice:[{scenario:"Patient denies any past illnesses.",answer:"Probe: 'Any blood pressure? Diabetes? TB or jaundice?' Direct questions unlock forgotten history."}]},
   {id:"dh",code:"DH",emoji:"💊",color:C.purple,light:"#F0EEF9",title:"Drug History & Allergies",title_bn:"ওষুধের ইতিহাস ও অ্যালার্জি",subtitle:"Medications, OTC drugs, supplements & allergies",subtitle_bn:"ওষুধ, ভিটামিন, সাপ্লিমেন্ট এবং অ্যালার্জি",audio:"Drug History and Allergies",
    prompts:[{en:"Any current medications including OTC?",bn:"বর্তমানে কোনো ওষুধ খাচ্ছেন?"},{en:"Any herbal or traditional remedies?",bn:"ভেষজ বা দেশীয় ওষুধ খাচ্ছেন?"},{en:"Any known allergies? What happens?",bn:"অ্যালার্জি আছে? কী হয় তখন?"}],
-   tip:{en:"Distinguish true allergy from side effect. Note dose, frequency, and compliance.",bn:"অ্যালার্জি ও পার্শ্বপ্রতিক্রিয়ার পার্থক্য করুন।"},mnemonics:[],
-   practice:[{scenario:"Patient says 'I'm allergic to penicillin.'",answer:"Ask: 'What exactly happens when you take it?' Distinguish rash/anaphylaxis (true allergy) from GI upset (intolerance)."}]},
-  {id:"fh",code:"FH",emoji:"👨‍👩‍👧",color:C.amber,light:"#FEF6E4",title:"Family History",title_bn:"পারিবারিক ইতিহাস",subtitle:"Hereditary conditions in close relatives",subtitle_bn:"নিকটাত্মীয়দের বংশগত রোগের ইতিহাস",audio:"Family History",
+   tip:{en:"Distinguish true allergy from side effect. Note dose and compliance.",bn:"অ্যালার্জি ও পার্শ্বপ্রতিক্রিয়ার পার্থক্য করুন।"},mnemonics:[],
+   practice:[{scenario:"Patient says 'I'm allergic to penicillin.'",answer:"Ask 'What exactly happens?' Distinguish rash/anaphylaxis (true allergy) from GI upset (intolerance)."}]},
+  {id:"fh",code:"FH",emoji:"👪",color:C.amber,light:"#FEF6E4",title:"Family History",title_bn:"পারিবারিক ইতিহাস",subtitle:"Hereditary conditions in close relatives",subtitle_bn:"নিকটাত্মীয়দের বংশগত রোগের ইতিহাস",audio:"Family History",
    prompts:[{en:"Any conditions run in your family?",bn:"পরিবারে কোনো রোগ আছে?"},{en:"Are your parents alive? Cause of death?",bn:"বাবা-মা বেঁচে আছেন? মৃত্যুর কারণ?"},{en:"Family history of DM, heart disease, cancer?",bn:"পরিবারে ডায়াবেটিস, হৃদরোগ, ক্যান্সার?"}],
    tip:{en:"Focus on first-degree relatives: parents, siblings, children.",bn:"প্রথম-স্তরের আত্মীয়: বাবা-মা, ভাই-বোন, সন্তান।"},mnemonics:[],
-   practice:[{scenario:"Young patient with chest pain, father died at 50.",answer:"Explore family cardiac history — premature CAD is hereditary. Ask about cholesterol, sudden deaths in family."}]},
-  {id:"sh",code:"SH",emoji:"🏙️",color:C.orange,light:"#FDF0E8",title:"Social History",title_bn:"সামাজিক ইতিহাস",subtitle:"Occupation, lifestyle, habits & support system",subtitle_bn:"পেশা, জীবনযাত্রা, অভ্যাস ও সামাজিক সহায়তা",audio:"Social History",
+   practice:[{scenario:"Young patient with chest pain, father died at 50.",answer:"Explore family cardiac history — premature CAD is hereditary. Ask about cholesterol, sudden deaths."}]},
+  {id:"sh",code:"SH",emoji:"🏙",color:C.orange,light:"#FDF0E8",title:"Social History",title_bn:"সামাজিক ইতিহাস",subtitle:"Occupation, lifestyle, habits & support system",subtitle_bn:"পেশা, জীবনযাত্রা, অভ্যাস ও সামাজিক সহায়তা",audio:"Social History",
    prompts:[{en:"What is your occupation?",bn:"আপনার পেশা কী?"},{en:"Do you smoke or use tobacco?",bn:"ধূমপান বা তামাক সেবন করেন?"},{en:"Do you drink alcohol? How much per week?",bn:"মদ্যপান করেন? সপ্তাহে কতটুকু?"},{en:"Who lives with you at home?",bn:"বাড়িতে কারা থাকেন?"}],
    tip:{en:"Be non-judgmental. Ask 'How much per week?' not 'Do you drink a lot?'",bn:"বিচার না করে জিজ্ঞেস করুন। 'কতটুকু?' জিজ্ঞেস করুন।"},
    mnemonics:[{name:"SADMA",items:["Smoking","Alcohol","Drugs","Marital status","Activity/Occupation"]}],
-   practice:[{scenario:"Patient seems reluctant to discuss habits.",answer:"Normalize it: 'Many of my patients smoke or drink — I ask everyone so I can give the best care.' Non-judgmental tone opens doors."}]},
-  {id:"ros",code:"ROS",emoji:"⚕️",color:C.rose,light:"#FAEAEE",title:"Review of Systems",title_bn:"সিস্টেম রিভিউ",subtitle:"Systematic screening of all body systems",subtitle_bn:"সমস্ত অঙ্গতন্ত্রের পদ্ধতিগত পর্যালোচনা",audio:"Review of Systems",
+   practice:[{scenario:"Patient seems reluctant to discuss habits.",answer:"Normalize: 'I ask everyone this so I can give the best care.' Non-judgmental tone opens doors."}]},
+  {id:"ros",code:"ROS",emoji:"⚕",color:C.rose,light:"#FAEAEE",title:"Review of Systems",title_bn:"সিস্টেম রিভিউ",subtitle:"Systematic screening of all body systems",subtitle_bn:"সমস্ত অঙ্গতন্ত্রের পদ্ধতিগত পর্যালোচনা",audio:"Review of Systems",
    prompts:[{en:"Any headaches, dizziness, or vision changes?",bn:"মাথাব্যথা, মাথা ঘোরা বা দৃষ্টি পরিবর্তন?"},{en:"Any chest pain or shortness of breath?",bn:"বুকে ব্যথা বা শ্বাসকষ্ট?"},{en:"Any nausea, vomiting, or bowel changes?",bn:"বমি ভাব, বমি বা পেটের সমস্যা?"},{en:"Any urinary symptoms?",bn:"প্রস্রাবের কোনো সমস্যা?"}],
-   tip:{en:"Screen by system — only drill deeper if positive. Don't ask everything at once.",bn:"প্রতিটি সিস্টেম স্ক্রিন করুন — পজিটিভ হলেই বিস্তারিত জিজ্ঞেস করুন।"},mnemonics:[],
-   practice:[{scenario:"You've completed HPC for abdominal pain.",answer:"Now screen other systems: chest pain? urinary symptoms? fever/rigors? Systematic screening catches what focused history misses."}]}
+   tip:{en:"Screen by system — only drill deeper if positive.",bn:"প্রতিটি সিস্টেম স্ক্রিন করুন — পজিটিভ হলেই বিস্তারিত জিজ্ঞেস করুন।"},mnemonics:[],
+   practice:[{scenario:"You've completed HPC for abdominal pain.",answer:"Now screen: chest pain? urinary symptoms? fever? Systematic screening catches what focused history misses."}]}
 ];
 
 const INIT_IDEAS=[
-  {id:1,author:"Rafiq · DMCH",step:"HPC",text:"রোগীকে শরীরের ছবিতে আঙুল দিয়ে ব্যথার জায়গা দেখাতে বলুন।",en:"Ask patient to point on a body diagram — faster than verbal description.",likes:18},
-  {id:2,author:"Priya · Chittagong",step:"SH",text:"'সপ্তাহে কতটা?' জিজ্ঞেস করুন — সরাসরি 'বেশি খান?' নয়।",en:"Ask 'How much per week?' not 'Do you drink a lot?' — more honest answers.",likes:25},
-  {id:3,author:"Lin · BIRDEM",step:"PMH",text:"'এই সমস্যা বাদে স্বাস্থ্য কেমন?' দিয়ে PMH শুরু করলে রোগী বেশি খোলে।",en:"Start PMH with 'Apart from this, how is your general health?' — opens up patients.",likes:12}
+  {id:1,author:"Rafiq - DMCH",step:"HPC",text:"Ask patient to point on a body diagram — faster than verbal description.",bn:"রোগীকে শরীরের ছবিতে আঙুল দিয়ে ব্যথার জায়গা দেখাতে বলুন।",likes:18},
+  {id:2,author:"Priya - Chittagong",step:"SH",text:"Ask 'How much per week?' not 'Do you drink a lot?' — more honest answers.",bn:"'সপ্তাহে কতটা?' জিজ্ঞেস করুন — সরাসরি 'বেশি খান?' নয়।",likes:25},
+  {id:3,author:"Lin - BIRDEM",step:"PMH",text:"Start PMH with 'Apart from this, how is your general health?' — opens up patients.",bn:"'এই সমস্যা বাদে স্বাস্থ্য কেমন?' দিয়ে PMH শুরু করুন।",likes:12}
 ];
 
-function speak(text){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=0.87;window.speechSynthesis.speak(u);}
+// ── STATE ─────────────────────────────────────────────────────
+let state={
+  tab:"guide",si:0,lang:"both",mnem:null,
+  ideas:[...INIT_IDEAS],liked:[],newStep:"HPC",newText:"",newEn:"",
+  notes:{},toast:"",copied:false,showPrint:false,spk:false,
+  loggedIn:false,lv:"login",fname:"",femail:"",fpass:"",ferr:"",user:null,
+  pi:0,showAns:false,score:{c:0,t:0}
+};
 
-const {useState,createElement:h}=React;
+function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.87;window.speechSynthesis.speak(u);}
 
-function App(){
-  const [tab,setTab]=useState("guide");
-  const [si,setSi]=useState(0);
-  const [lang,setLang]=useState("both");
-  const [mnem,setMnem]=useState(null);
-  const [ideas,setIdeas]=useState(INIT_IDEAS);
-  const [liked,setLiked]=useState([]);
-  const [newIdea,setNewIdea]=useState({step:"HPC",text:"",en:""});
-  const [notes,setNotes]=useState({});
-  const [spk,setSpk]=useState(false);
-  const [toast,setToast]=useState("");
-  const [copied,setCopied]=useState(false);
-  const [loggedIn,setLoggedIn]=useState(false);
-  const [lv,setLv]=useState("login");
-  const [form,setForm]=useState({name:"",email:"",password:""});
-  const [ferr,setFerr]=useState("");
-  const [user,setUser]=useState(null);
-  const [pi,setPi]=useState(0);
-  const [showAns,setShowAns]=useState(false);
-  const [score,setScore]=useState({c:0,t:0});
-  const [showPrint,setShowPrint]=useState(false);
+function setState(patch){Object.assign(state,patch);render();}
 
-  const S=STEPS[si];
-  const allP=STEPS.flatMap(s=>s.practice.map(p=>({...p,code:s.code,color:s.color,emoji:s.emoji,light:s.light})));
-  const curP=allP[pi%allP.length];
+function showToast(m){setState({toast:m});setTimeout(()=>setState({toast:""}),2200);}
 
-  const toast2=(m)=>{setToast(m);setTimeout(()=>setToast(""),2200);};
-  const doSpeak=(t)=>{setSpk(true);speak(t);setTimeout(()=>setSpk(false),2000);};
-  const like=(id)=>{if(liked.includes(id)){setLiked(p=>p.filter(x=>x!==id));setIdeas(p=>p.map(i=>i.id===id?{...i,likes:i.likes-1}:i));}else{setLiked(p=>[...p,id]);setIdeas(p=>p.map(i=>i.id===id?{...i,likes:i.likes+1}:i));}};
-  const post=()=>{if(!newIdea.text.trim())return;setIdeas(p=>[{id:Date.now(),author:user?user.name+" (You)":"আপনি (You)",step:newIdea.step,text:newIdea.text,en:newIdea.en,likes:0},...p]);setNewIdea(p=>({...p,text:"",en:""}));toast2("✅ Posted!");};
-  const copyNotes=()=>{navigator.clipboard.writeText(STEPS.map(s=>"## "+s.title+"\n"+(notes[s.id]||"(empty)")).join("\n\n"));setCopied(true);setTimeout(()=>setCopied(false),2200);toast2("📋 Copied!");};
-  const login=()=>{if(!form.email||!form.password){setFerr("Please fill all fields.");return;}const n=form.name||form.email.split("@")[0];setUser({name:n,email:form.email});setLoggedIn(true);setFerr("");toast2("👋 Welcome, "+n+"!");setTab("guide");};
+function render(){
+  const s=STEPS[state.si];
+  const allP=STEPS.flatMap(x=>x.practice.map(p=>({...p,color:x.color,emoji:x.emoji,light:x.light,code:x.code})));
+  const curP=allP[state.pi%allP.length];
+  const L=state.lang;
 
-  const iS={width:"100%",padding:"11px 14px",background:C.bg,border:"1.5px solid "+C.border,borderRadius:10,color:C.text,fontSize:14,fontFamily:"Georgia,serif",marginBottom:12,boxSizing:"border-box"};
+  document.getElementById("app").innerHTML=`
+  ${state.toast?`<div class="toast">${state.toast}</div>`:""}
 
-  // Header
-  const header=h("header",{style:{background:"linear-gradient(135deg,"+C.navy+" 0%,#1E4976 100%)",padding:"14px 16px 10px",boxShadow:"0 4px 20px rgba(26,53,87,.25)",position:"sticky",top:0,zIndex:100}},
-    h("div",{style:{maxWidth:900,margin:"0 auto"}},
-      h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}},
-        h("div",{style:{display:"flex",alignItems:"center",gap:10}},
-          h("div",{style:{background:"rgba(255,255,255,.15)",border:"2px solid rgba(255,255,255,.25)",borderRadius:12,padding:"6px 10px",fontSize:22}},"⚕️"),
-          h("div",null,
-            h("div",{style:{fontSize:17,fontWeight:"bold",fontFamily:"monospace",color:"#fff"}},"Dcode Ward History"),
-            h("div",{style:{fontSize:9,color:"rgba(255,255,255,.6)",fontFamily:"monospace"}},"ডিকোড ওয়ার্ড হিস্ট্রি · BD & International")
-          )
-        ),
-        h("div",{style:{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}},
-          h("div",{style:{display:"flex",background:"rgba(255,255,255,.1)",borderRadius:20,padding:3,gap:2}},
-            ...["both","en","bn"].map(v=>h("button",{key:v,onClick:()=>setLang(v),style:{padding:"3px 10px",borderRadius:16,border:"none",cursor:"pointer",fontSize:10,fontWeight:"bold",background:lang===v?"#fff":"transparent",color:lang===v?C.navy:"rgba(255,255,255,.75)"}},v==="both"?"EN+বাং":v.toUpperCase()))
-          ),
-          h("button",{onClick:()=>setShowPrint(true),style:{padding:"5px 12px",background:"rgba(255,255,255,.12)",border:"1px solid rgba(255,255,255,.25)",color:"#fff",borderRadius:20,cursor:"pointer",fontSize:11,fontFamily:"monospace"}},"🖨 Print"),
-          loggedIn
-            ?h("div",{style:{display:"flex",alignItems:"center",gap:6,background:"rgba(255,255,255,.1)",border:"1px solid rgba(255,255,255,.2)",borderRadius:20,padding:"4px 12px"}},
-                h("span",null,"👤"),h("span",{style:{fontSize:11,color:"#fff",fontFamily:"monospace"}},user?.name),
-                h("button",{onClick:()=>{setLoggedIn(false);setUser(null);},style:{background:"none",border:"none",color:"rgba(255,255,255,.5)",cursor:"pointer",fontSize:10,fontFamily:"monospace"}},"out"))
-            :h("button",{onClick:()=>setTab("login"),style:{padding:"5px 14px",background:"rgba(255,255,255,.95)",border:"none",color:C.navy,borderRadius:20,cursor:"pointer",fontSize:11,fontFamily:"monospace",fontWeight:"bold"}},"🔐 Login")
-        )
-      ),
-      h("div",{style:{display:"flex",gap:6,marginTop:10,flexWrap:"wrap"}},
-        ...["guide","practice","community","notepad"].map((t,i)=>
-          h("button",{key:t,onClick:()=>setTab(t),style:{padding:"5px 14px",borderRadius:20,border:"none",cursor:"pointer",fontSize:11,fontFamily:"monospace",background:tab===t?"#fff":"rgba(255,255,255,.12)",color:tab===t?C.navy:"rgba(255,255,255,.8)",fontWeight:tab===t?"bold":"normal"}},
-            ["📖 Guide","🏋️ Practice","💬 Community","📝 Notepad"][i])
-        )
-      )
-    )
-  );
+  ${state.showPrint?printModal():""}
 
-  // Guide tab
-  const guideTab=h("div",null,
-    // Progress
-    h("div",{style:{marginBottom:18}},
-      h("div",{style:{display:"flex",justifyContent:"space-between",fontSize:10,fontFamily:"monospace",color:C.muted,marginBottom:5}},
-        h("span",null,"STEP "+(si+1)+" / "+STEPS.length),
-        h("span",{style:{color:S.color,fontWeight:"bold"}},Math.round(((si+1)/STEPS.length)*100)+"%")
-      ),
-      h("div",{style:{height:6,background:C.border,borderRadius:10,overflow:"hidden"}},
-        h("div",{style:{height:"100%",width:((si+1)/STEPS.length*100)+"%",background:"linear-gradient(90deg,"+S.color+","+S.color+"bb)",borderRadius:10,transition:"width .4s"}})
-      )
-    ),
-    // Pills
-    h("div",{style:{display:"flex",gap:6,flexWrap:"wrap",marginBottom:18}},
-      ...STEPS.map((s,i)=>h("button",{key:s.id,onClick:()=>{setSi(i);setMnem(null);},style:{padding:"5px 14px",borderRadius:20,border:"2px solid "+(i===si?s.color:C.border),background:i===si?s.color:"#fff",color:i===si?"#fff":C.muted,cursor:"pointer",fontSize:11,fontWeight:"bold",fontFamily:"monospace",boxShadow:i===si?"0 2px 10px "+s.color+"44":"none"}},s.code))
-    ),
-    // Card
-    h("div",{style:{background:C.card,borderRadius:18,boxShadow:"0 6px 24px rgba(26,53,87,.1)",overflow:"hidden",marginBottom:16,border:"1px solid "+C.border}},
-      h("div",{style:{background:"linear-gradient(135deg,"+S.color+","+S.color+"bb)",padding:"20px 22px"}},
-        h("div",{style:{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10,flexWrap:"wrap"}},
-          h("div",{style:{display:"flex",alignItems:"center",gap:12}},
-            h("div",{style:{background:"rgba(255,255,255,.2)",border:"2px solid rgba(255,255,255,.3)",borderRadius:14,padding:"8px 12px",fontSize:26}},S.emoji),
-            h("div",null,
-              h("div",{style:{fontSize:9,fontFamily:"monospace",color:"rgba(255,255,255,.8)",letterSpacing:3,marginBottom:2}},S.code),
-              h("div",{style:{fontSize:18,fontWeight:"bold",color:"#fff"}},S.title),
-              (lang==="both"||lang==="bn")&&h("div",{style:{fontSize:12,color:"rgba(255,255,255,.85)",marginTop:2}},S.title_bn)
-            )
-          ),
-          h("button",{onClick:()=>doSpeak(S.audio),style:{display:"flex",alignItems:"center",gap:6,background:"rgba(255,255,255,.2)",border:"1.5px solid rgba(255,255,255,.4)",color:"#fff",borderRadius:10,padding:"7px 12px",cursor:"pointer",flexShrink:0}},
-            h("span",{style:{fontSize:16}},spk?"🔊":"🔉"),h("span",{style:{fontSize:9,fontFamily:"monospace"}},"PRONOUNCE")
-          )
-        ),
-        h("p",{style:{margin:"10px 0 0",fontSize:13,lineHeight:1.7,color:"rgba(255,255,255,.9)"}},
-          (lang==="en"||lang==="both")?S.subtitle:"",lang==="both"?" · ":"",(lang==="bn"||lang==="both")?S.subtitle_bn:""
-        )
-      ),
-      h("div",{style:{padding:22}},
-        h("div",{style:{fontFamily:"monospace",fontSize:9,color:C.muted,letterSpacing:3,marginBottom:10,textTransform:"uppercase"}},"🎙 Key Questions"),
-        h("div",{style:{display:"flex",flexDirection:"column",gap:9}},
-          ...S.prompts.map((q,i)=>h("div",{key:i,style:{display:"flex",gap:10,padding:"11px 14px",background:S.light,borderRadius:11,borderLeft:"4px solid "+S.color,alignItems:"flex-start"}},
-            h("span",{style:{background:S.color,color:"#fff",borderRadius:"50%",width:20,height:20,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:"bold",flexShrink:0,marginTop:2}},i+1),
-            h("div",{style:{flex:1}},
-              (lang==="en"||lang==="both")&&h("div",{style:{fontSize:13,fontStyle:"italic",color:C.text,lineHeight:1.5}},'"'+q.en+'"'),
-              (lang==="bn"||lang==="both")&&h("div",{style:{fontSize:12,color:S.color,marginTop:lang==="both"?2:0,lineHeight:1.5}},'"'+q.bn+'"')
-            ),
-            h("button",{onClick:()=>doSpeak(q.en),style:{background:"none",border:"none",cursor:"pointer",fontSize:14,opacity:.5}},"🔊")
-          ))
-        ),
-        h("div",{style:{background:"#FFFBF0",border:"1px solid #F5D87A",borderRadius:11,padding:"12px 16px",marginTop:16}},
-          h("div",{style:{fontFamily:"monospace",fontSize:9,color:"#B7841A",letterSpacing:3,marginBottom:5}},"💡 CLINICAL TIP"),
-          (lang==="en"||lang==="both")&&h("p",{style:{margin:0,fontSize:13,color:"#5C4A00",lineHeight:1.7}},S.tip.en),
-          (lang==="bn"||lang==="both")&&h("p",{style:{margin:lang==="both"?"5px 0 0":0,fontSize:12,color:"#7A6010",lineHeight:1.7}},S.tip.bn)
-        ),
-        ...S.mnemonics.map(m=>h("div",{key:m.name,style:{marginTop:16}},
-          h("button",{onClick:()=>setMnem(mnem===m.name?null:m.name),style:{display:"flex",alignItems:"center",gap:8,background:S.light,border:"2px solid "+S.color+"44",borderRadius:11,padding:"10px 16px",cursor:"pointer",width:"100%",textAlign:"left"}},
-            h("span",{style:{fontSize:16}},"🧠"),
-            h("span",{style:{fontFamily:"monospace",fontWeight:"bold",color:S.color,fontSize:12}},"MNEMONIC: "+m.name),
-            h("span",{style:{marginLeft:"auto",color:S.color,fontSize:11}},mnem===m.name?"▲ Hide":"▼ Reveal")
-          ),
-          mnem===m.name&&h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(100px,1fr))",gap:8,marginTop:10}},
-            ...m.items.map((it,j)=>h("button",{key:j,onClick:()=>doSpeak(it),style:{background:S.light,border:"1.5px solid "+S.color+"44",borderRadius:11,padding:"10px 8px",textAlign:"center",cursor:"pointer"}},
-              h("div",{style:{fontFamily:"monospace",fontSize:20,fontWeight:"bold",color:S.color}},it[0]),
-              h("div",{style:{fontSize:10,color:C.muted,marginTop:2}},it),
-              h("div",{style:{fontSize:9,color:S.color,marginTop:3,opacity:.7}},"🔊 tap")
-            ))
-          )
-        ))
-      )
-    ),
-    h("div",{style:{display:"flex",gap:10,justifyContent:"space-between"}},
-      h("button",{onClick:()=>{setSi(Math.max(0,si-1));setMnem(null);},disabled:si===0,style:{padding:"10px 20px",borderRadius:11,border:"2px solid "+C.border,background:"#fff",color:si===0?C.border:C.text,cursor:si===0?"not-allowed":"pointer",fontFamily:"monospace",fontWeight:"bold",fontSize:12}},"← Back"),
-      h("button",{onClick:()=>{setSi(Math.min(STEPS.length-1,si+1));setMnem(null);},disabled:si===STEPS.length-1,style:{padding:"10px 24px",borderRadius:11,border:"none",background:si===STEPS.length-1?"#ccc":"linear-gradient(135deg,"+S.color+","+S.color+"bb)",color:"#fff",cursor:si===STEPS.length-1?"not-allowed":"pointer",fontFamily:"monospace",fontWeight:"bold",fontSize:12,boxShadow:si===STEPS.length-1?"none":"0 3px 12px "+S.color+"44"}},"Next Step →")
-    ),
-    h("div",{style:{marginTop:22,background:C.card,borderRadius:14,padding:"16px 18px",boxShadow:"0 3px 14px rgba(26,53,87,.07)",border:"1px solid "+C.border}},
-      h("div",{style:{fontFamily:"monospace",fontSize:9,color:C.muted,letterSpacing:3,marginBottom:12,textTransform:"uppercase"}},"📍 Full History Flow"),
-      h("div",{style:{display:"flex",alignItems:"center",flexWrap:"wrap",gap:5}},
-        ...STEPS.map((s,i)=>h("div",{key:s.id,style:{display:"flex",alignItems:"center"}},
-          h("button",{onClick:()=>{setSi(i);setMnem(null);},style:{display:"flex",flexDirection:"column",alignItems:"center",gap:3,background:i===si?s.color:C.lightBg,border:"2px solid "+(i===si?s.color:C.border),borderRadius:11,padding:"8px 10px",cursor:"pointer",minWidth:52,transition:"all .2s",boxShadow:i===si?"0 2px 10px "+s.color+"44":"none"}},
-            h("span",{style:{fontSize:16}},s.emoji),
-            h("span",{style:{fontFamily:"monospace",fontSize:9,fontWeight:"bold",color:i===si?"#fff":s.color}},s.code)
-          ),
-          i<STEPS.length-1&&h("div",{style:{width:12,height:2,background:C.border,flexShrink:0}})
-        ))
-      )
-    )
-  );
+  <header class="header">
+    <div style="max-width:900px;margin:0 auto">
+      <div class="logo-row">
+        <div class="logo">
+          <div class="logo-icon">⚕</div>
+          <div>
+            <div class="logo-title">Dcode Ward History</div>
+            <div class="logo-sub">ডিকোড ওয়ার্ড হিস্ট্রি · BD & International</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="lang-toggle">
+            ${["both","en","bn"].map(v=>`<button class="lang-btn ${state.lang===v?"active":""}" onclick="setState({lang:'${v}'})">${v==="both"?"EN+বাং":v.toUpperCase()}</button>`).join("")}
+          </div>
+          <button class="header-btn" onclick="setState({showPrint:true})">🖨 Print</button>
+          ${state.loggedIn
+            ?`<div class="user-badge"><span>👤</span><span>${state.user.name}</span><button class="logout-btn" onclick="setState({loggedIn:false,user:null})">out</button></div>`
+            :`<button class="login-btn" onclick="setState({tab:'login'})">🔐 Login</button>`}
+        </div>
+      </div>
+      <div class="tabs">
+        ${[["guide","📖 Guide"],["practice","🏋 Practice"],["community","💬 Community"],["notepad","📝 Notepad"]].map(([t,l])=>`<button class="tab-btn ${state.tab===t?"active":""}" onclick="setState({tab:'${t}'})">${l}</button>`).join("")}
+      </div>
+    </div>
+  </header>
 
-  // Practice tab
-  const practiceTab=h("div",null,
-    h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18,flexWrap:"wrap",gap:10}},
-      h("div",null,
-        h("h2",{style:{fontFamily:"monospace",color:C.navy,margin:0,fontSize:14,letterSpacing:2,textTransform:"uppercase"}},"🏋️ Practice Mode"),
-        h("p",{style:{color:C.muted,fontSize:11,margin:"3px 0 0",fontFamily:"monospace"}},"Real ward scenarios — think before you reveal")
-      ),
-      h("div",{style:{background:C.card,border:"2px solid "+C.lime,borderRadius:12,padding:"7px 18px",textAlign:"center"}},
-        h("div",{style:{fontFamily:"monospace",fontSize:10,color:C.muted}},"SCORE"),
-        h("div",{style:{fontFamily:"monospace",fontSize:20,fontWeight:"bold",color:C.lime}},score.c+"/"+score.t)
-      )
-    ),
-    h("div",{style:{background:C.card,borderRadius:18,border:"2px solid "+curP.color+"33",boxShadow:"0 5px 20px rgba(26,53,87,.1)",overflow:"hidden",marginBottom:18}},
-      h("div",{style:{background:curP.light,borderBottom:"2px solid "+curP.color+"22",padding:"12px 20px",display:"flex",alignItems:"center",gap:10}},
-        h("span",{style:{fontSize:18}},curP.emoji),
-        h("span",{style:{fontFamily:"monospace",fontWeight:"bold",color:curP.color,fontSize:12}},curP.code),
-        h("span",{style:{fontFamily:"monospace",fontSize:10,color:C.muted}},"CASE #"+((pi%allP.length)+1)+" of "+allP.length)
-      ),
-      h("div",{style:{padding:22}},
-        h("div",{style:{fontFamily:"monospace",fontSize:9,color:C.muted,letterSpacing:3,marginBottom:8}},"📋 SCENARIO"),
-        h("p",{style:{fontSize:15,lineHeight:1.7,color:C.text,background:C.lightBg,borderRadius:11,padding:"14px 18px",border:"1px solid "+C.border,margin:"0 0 18px"}},curP.scenario),
-        !showAns
-          ?h("button",{onClick:()=>setShowAns(true),style:{width:"100%",padding:"13px",background:"linear-gradient(135deg,"+curP.color+","+curP.color+"bb)",border:"none",borderRadius:11,color:"#fff",fontWeight:"bold",fontSize:13,cursor:"pointer",fontFamily:"monospace"}},"💡 Reveal Best Approach")
-          :h("div",null,
-              h("div",{style:{fontFamily:"monospace",fontSize:9,color:C.lime,letterSpacing:3,marginBottom:8}},"✅ SUGGESTED APPROACH"),
-              h("div",{style:{background:"#EAF6EF",border:"1.5px solid "+C.lime,borderRadius:11,padding:"14px 18px",fontSize:14,lineHeight:1.7,color:"#2D6A4F",marginBottom:16}},curP.answer),
-              h("div",{style:{display:"flex",gap:10}},
-                h("button",{onClick:()=>{setScore(p=>({c:p.c+1,t:p.t+1}));setShowAns(false);setPi(i=>i+1);},style:{flex:1,padding:"11px",background:"#EAF6EF",border:"2px solid "+C.lime,color:C.lime,borderRadius:11,cursor:"pointer",fontFamily:"monospace",fontWeight:"bold",fontSize:12}},"✅ Got it!"),
-                h("button",{onClick:()=>{setScore(p=>({...p,t:p.t+1}));setShowAns(false);setPi(i=>i+1);},style:{flex:1,padding:"11px",background:"#FAEAEE",border:"2px solid "+C.rose,color:C.rose,borderRadius:11,cursor:"pointer",fontFamily:"monospace",fontWeight:"bold",fontSize:12}},"❌ Need more practice")
-              )
-            )
-      )
-    ),
-    h("div",{style:{background:C.card,borderRadius:14,border:"1px solid "+C.border,overflow:"hidden"}},
-      h("div",{style:{padding:"11px 18px",borderBottom:"1px solid "+C.border,fontFamily:"monospace",fontSize:10,color:C.muted,letterSpacing:2,background:C.lightBg}},"ALL SCENARIOS ("+allP.length+")"),
-      ...allP.map((p,i)=>h("div",{key:i,onClick:()=>{setPi(i);setShowAns(false);},style:{padding:"11px 18px",borderBottom:"1px solid "+C.border,cursor:"pointer",display:"flex",alignItems:"center",gap:10,background:i===pi%allP.length?p.light:"transparent"}},
-        h("span",{style:{fontSize:14}},p.emoji),
-        h("span",{style:{fontFamily:"monospace",fontSize:10,color:p.color,minWidth:32,fontWeight:"bold"}},p.code),
-        h("span",{style:{fontSize:12,color:C.muted,flex:1}},p.scenario),
-        i===pi%allP.length&&h("span",{style:{color:p.color,fontSize:11}},"▶")
-      ))
-    )
-  );
+  <div class="main">
+    ${state.tab==="guide"?guideTab(s,L,allP):""}
+    ${state.tab==="practice"?practiceTab(curP,allP):""}
+    ${state.tab==="community"?communityTab():""}
+    ${state.tab==="notepad"?notepadTab():""}
+    ${state.tab==="login"?loginTab():""}
+  </div>
 
-  // Community tab
-  const communityTab=h("div",null,
-    h("h2",{style:{fontFamily:"monospace",color:C.navy,margin:"0 0 4px",fontSize:14,letterSpacing:2,textTransform:"uppercase"}},"💬 Student Tips"),
-    h("p",{style:{color:C.muted,fontSize:11,marginBottom:18}},"শিক্ষার্থীদের টিপস শেয়ার করুন · Share your ward tricks"),
-    h("div",{style:{background:C.card,borderRadius:14,border:"1px solid "+C.border,padding:20,marginBottom:20}},
-      h("div",{style:{fontFamily:"monospace",fontSize:10,color:C.muted,letterSpacing:2,marginBottom:12,textTransform:"uppercase"}},"✍️ Post Your Idea"),
-      h("select",{value:newIdea.step,onChange:e=>setNewIdea(p=>({...p,step:e.target.value})),style:{width:"100%",padding:"9px 12px",background:C.bg,border:"1.5px solid "+C.border,borderRadius:9,color:C.text,fontSize:12,fontFamily:"monospace",marginBottom:10,boxSizing:"border-box"}},
-        ...STEPS.map(s=>h("option",{key:s.id,value:s.code},s.code+" — "+s.title))
-      ),
-      h("textarea",{value:newIdea.text,onChange:e=>setNewIdea(p=>({...p,text:e.target.value})),placeholder:"বাংলায় বা ইংরেজিতে আপনার টিপস লিখুন...",rows:2,style:{width:"100%",padding:"10px 12px",background:C.bg,border:"1.5px solid "+C.border,borderRadius:9,color:C.text,fontSize:13,fontFamily:"Georgia,serif",resize:"vertical",boxSizing:"border-box",marginBottom:8}}),
-      h("textarea",{value:newIdea.en,onChange:e=>setNewIdea(p=>({...p,en:e.target.value})),placeholder:"(Optional) English translation...",rows:2,style:{width:"100%",padding:"10px 12px",background:C.bg,border:"1.5px solid "+C.border,borderRadius:9,color:C.muted,fontSize:12,fontFamily:"Georgia,serif",resize:"vertical",boxSizing:"border-box",marginBottom:12}}),
-      h("button",{onClick:post,style:{padding:"9px 22px",background:"linear-gradient(135deg,"+C.navy+",#1E4976)",color:"#fff",border:"none",borderRadius:9,cursor:"pointer",fontFamily:"monospace",fontWeight:"bold",fontSize:12}},"POST →")
-    ),
-    h("div",{style:{display:"flex",flexDirection:"column",gap:10}},
-      ...ideas.map(idea=>{
-        const s=STEPS.find(x=>x.code===idea.step);
-        return h("div",{key:idea.id,style:{background:C.card,borderRadius:12,padding:18,border:"1px solid "+C.border,borderLeft:"4px solid "+(s?.color||"#999")}},
-          h("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:8,flexWrap:"wrap"}},
-            h("span",{style:{background:s?.color,color:"#fff",borderRadius:5,padding:"2px 10px",fontFamily:"monospace",fontSize:10,fontWeight:"bold"}},idea.step),
-            h("span",{style:{fontFamily:"monospace",fontSize:11,color:C.muted}},"by "+idea.author)
-          ),
-          h("p",{style:{margin:"0 0 5px",fontSize:14,lineHeight:1.7,color:C.text}},idea.text),
-          idea.en&&h("p",{style:{margin:"0 0 10px",fontSize:12,lineHeight:1.6,color:C.muted,fontStyle:"italic"}},idea.en),
-          h("button",{onClick:()=>like(idea.id),style:{display:"flex",alignItems:"center",gap:5,background:liked.includes(idea.id)?"#FAEAEE":"#F4F8FC",border:"1px solid "+(liked.includes(idea.id)?C.rose:C.border),borderRadius:18,padding:"4px 12px",cursor:"pointer",color:liked.includes(idea.id)?C.rose:C.muted,fontSize:12,fontFamily:"monospace"}},
-            liked.includes(idea.id)?"❤️":"🤍"," "+idea.likes
-          )
-        );
-      })
-    )
-  );
-
-  // Notepad tab
-  const notepadTab=h("div",null,
-    h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18,flexWrap:"wrap",gap:10}},
-      h("div",null,
-        h("h2",{style:{fontFamily:"monospace",color:C.navy,margin:0,fontSize:14,letterSpacing:2,textTransform:"uppercase"}},"📝 Patient Notepad"),
-        h("p",{style:{color:C.muted,fontSize:11,margin:"3px 0 0",fontFamily:"monospace"}},(loggedIn?"Saving as "+user?.name+" · ":"Login to save · ")+"রোগীর নোট")
-      ),
-      h("button",{onClick:copyNotes,style:{padding:"8px 18px",background:copied?C.lime:C.navy,color:"#fff",border:"none",borderRadius:9,cursor:"pointer",fontFamily:"monospace",fontSize:11,fontWeight:"bold",transition:"background .3s"}},copied?"✓ Copied!":"⬆ Copy All")
-    ),
-    !loggedIn&&h("div",{style:{background:"#FFFBF0",border:"1px solid #F5D87A",borderRadius:11,padding:"11px 16px",marginBottom:18,display:"flex",alignItems:"center",gap:10}},
-      h("span",{style:{fontSize:18}},"🔐"),
-      h("div",{style:{flex:1}},
-        h("div",{style:{color:"#B7841A",fontFamily:"monospace",fontSize:11,fontWeight:"bold"}},"Login to save notes permanently"),
-        h("div",{style:{color:C.muted,fontSize:11,marginTop:2}},"Notes only last this session")
-      ),
-      h("button",{onClick:()=>setTab("login"),style:{padding:"6px 14px",background:"#F5A62322",border:"1px solid "+C.amber,color:C.amber,borderRadius:9,cursor:"pointer",fontFamily:"monospace",fontSize:11,fontWeight:"bold"}},"Login →")
-    ),
-    h("div",{style:{display:"flex",flexDirection:"column",gap:12}},
-      ...STEPS.map(s=>h("div",{key:s.id,style:{background:C.card,borderRadius:12,overflow:"hidden",border:"1px solid "+C.border}},
-        h("div",{style:{background:"linear-gradient(135deg,"+s.color+","+s.color+"bb)",padding:"9px 16px",display:"flex",alignItems:"center",gap:7}},
-          h("span",{style:{fontSize:14}},s.emoji),
-          h("div",null,
-            h("span",{style:{fontFamily:"monospace",fontWeight:"bold",fontSize:12,color:"#fff"}},s.code+" — "+s.title),
-            h("div",{style:{fontSize:9,color:"rgba(255,255,255,.75)"}},s.title_bn)
-          )
-        ),
-        h("textarea",{value:notes[s.id]||"",onChange:e=>setNotes(p=>({...p,[s.id]:e.target.value})),placeholder:"Notes for "+s.title+" · "+s.title_bn+"...",rows:3,style:{width:"100%",padding:"12px 16px",border:"none",fontFamily:"Georgia,serif",fontSize:13,lineHeight:1.7,resize:"vertical",boxSizing:"border-box",color:C.text,background:C.lightBg}})
-      ))
-    )
-  );
-
-  // Login tab
-  const loginTab=h("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"55vh"}},
-    h("div",{style:{background:C.surface,border:"1px solid "+C.border,borderRadius:18,padding:32,width:"100%",maxWidth:400,boxShadow:"0 8px 36px rgba(26,53,87,.12)"}},
-      h("div",{style:{textAlign:"center",marginBottom:24}},
-        h("div",{style:{fontSize:36,marginBottom:7}},"🔐"),
-        h("div",{style:{fontSize:18,fontWeight:"bold",fontFamily:"monospace",color:C.navy}},lv==="login"?"Welcome Back":"Create Account"),
-        h("div",{style:{fontSize:11,color:C.muted,marginTop:3}},"Save your notes across sessions")
-      ),
-      ferr&&h("div",{style:{background:"#FEE8ED",border:"1px solid #F8B4C2",color:C.rose,borderRadius:7,padding:"7px 12px",fontSize:11,marginBottom:12,textAlign:"center"}},ferr),
-      lv==="signup"&&h("input",{value:form.name,onChange:e=>setForm(p=>({...p,name:e.target.value})),placeholder:"Your name",style:iS}),
-      h("input",{value:form.email,onChange:e=>setForm(p=>({...p,email:e.target.value})),placeholder:"Email address",type:"email",style:iS}),
-      h("input",{value:form.password,onChange:e=>setForm(p=>({...p,password:e.target.value})),placeholder:"Password",type:"password",style:{...iS,marginBottom:20}}),
-      h("button",{onClick:login,style:{width:"100%",padding:"12px",background:"linear-gradient(135deg,"+C.navy+",#1E4976)",border:"none",borderRadius:11,color:"#fff",fontWeight:"bold",fontSize:14,cursor:"pointer",fontFamily:"monospace",boxShadow:"0 4px 16px rgba(26,53,87,.25)"}},lv==="login"?"🔐 Login":"🚀 Create Account"),
-      h("div",{style:{textAlign:"center",marginTop:14,fontSize:12,color:C.muted}},
-        lv==="login"?"Don't have an account? ":"Already have an account? ",
-        h("button",{onClick:()=>{setLv(lv==="login"?"signup":"login");setFerr("");},style:{background:"none",border:"none",color:C.teal,cursor:"pointer",fontSize:12,fontFamily:"monospace",textDecoration:"underline"}},lv==="login"?"Sign Up":"Login")
-      )
-    )
-  );
-
-  // Print sheet
-  const printSheet=showPrint&&h("div",{style:{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:14}},
-    h("div",{style:{background:"#fff",borderRadius:16,maxWidth:700,width:"100%",maxHeight:"90vh",overflow:"auto",boxShadow:"0 20px 60px rgba(0,0,0,.25)"}},
-      h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 20px",background:C.navy,borderRadius:"16px 16px 0 0"}},
-        h("span",{style:{color:"#fff",fontFamily:"monospace",fontWeight:"bold",fontSize:13}},"⚕️ Dcode Ward History · Cheat Sheet"),
-        h("button",{onClick:()=>setShowPrint(false),style:{background:"rgba(255,255,255,.15)",border:"none",color:"#fff",borderRadius:7,padding:"5px 12px",cursor:"pointer",fontSize:12}},"✕ Close")
-      ),
-      h("div",{style:{padding:22}},
-        h("div",{style:{textAlign:"center",marginBottom:16}},
-          h("div",{style:{fontSize:20,fontWeight:"bold",color:C.navy,fontFamily:"Georgia,serif"}},"⚕️ Dcode Ward History"),
-          h("div",{style:{fontSize:10,color:"#888",marginTop:2}},"Patient History-Taking · Ward Quick Reference · EN + বাংলা")
-        ),
-        h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}},
-          ...STEPS.map(s=>h("div",{key:s.id,style:{border:"2px solid "+s.color,borderRadius:9,overflow:"hidden"}},
-            h("div",{style:{background:s.color,padding:"7px 11px",display:"flex",gap:7,alignItems:"center"}},
-              h("span",{style:{fontSize:14}},s.emoji),
-              h("div",null,
-                h("div",{style:{color:"#fff",fontWeight:"bold",fontSize:11}},s.code+" — "+s.title),
-                h("div",{style:{color:"rgba(255,255,255,.85)",fontSize:8}},s.title_bn)
-              )
-            ),
-            h("div",{style:{padding:"9px 11px",background:"#fafafa"}},
-              ...s.prompts.slice(0,3).map((p,i)=>h("div",{key:i,style:{borderLeft:"3px solid "+s.color,paddingLeft:6,marginBottom:4}},
-                h("div",{style:{fontSize:9,color:"#222",lineHeight:1.4}},p.en),
-                h("div",{style:{fontSize:8,color:"#777"}},p.bn)
-              )),
-              ...s.mnemonics.map(m=>h("div",{key:m.name,style:{marginTop:6,background:s.color+"18",borderRadius:5,padding:"4px 8px"}},
-                h("div",{style:{fontSize:8,fontWeight:"bold",color:s.color,marginBottom:2}},"🧠 "+m.name),
-                h("div",{style:{display:"flex",flexWrap:"wrap",gap:2}},
-                  ...m.items.map((it,j)=>h("span",{key:j,style:{background:s.color,color:"#fff",borderRadius:3,padding:"1px 5px",fontSize:7}},h("b",null,it[0]),it.slice(1)))
-                )
-              )),
-              h("div",{style:{marginTop:5,fontSize:8,color:"#555",fontStyle:"italic",borderTop:"1px dashed #e0e0e0",paddingTop:4}},"💡 "+s.tip.en)
-            )
-          ))
-        ),
-        h("div",{style:{marginTop:12,textAlign:"center",fontSize:8,color:"#aaa",borderTop:"1px solid #eee",paddingTop:8}},"Dcode Ward History · Created by Maria Sultana Hira · Always verify with your clinical supervisor")
-      ),
-      h("div",{style:{padding:"11px 20px",borderTop:"1px solid #eee",display:"flex",gap:8,justifyContent:"flex-end",background:"#f9f9f9",borderRadius:"0 0 16px 16px"}},
-        h("button",{onClick:()=>window.print(),style:{padding:"9px 24px",background:C.teal,color:"#fff",border:"none",borderRadius:9,cursor:"pointer",fontWeight:"bold",fontSize:13}},"🖨 Print / Save PDF")
-      )
-    )
-  );
-
-  return h("div",{style:{fontFamily:"Georgia,serif",background:C.bg,minHeight:"100vh",color:C.text}},
-    toast&&h("div",{style:{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",background:C.navy,color:"#fff",border:"1px solid "+C.teal,padding:"9px 22px",borderRadius:28,zIndex:3000,fontFamily:"monospace",fontSize:12,boxShadow:"0 5px 20px rgba(0,0,0,.15)",whiteSpace:"nowrap"}},toast),
-    printSheet,
-    header,
-    h("div",{style:{maxWidth:900,margin:"0 auto",padding:"20px 14px 46px"}},
-      tab==="guide"&&guideTab,
-      tab==="practice"&&practiceTab,
-      tab==="community"&&communityTab,
-      tab==="notepad"&&notepadTab,
-      tab==="login"&&loginTab
-    ),
-    h("footer",{style:{textAlign:"center",padding:"14px",fontFamily:"monospace",fontSize:10,color:C.muted,borderTop:"1px solid "+C.border,background:C.surface}},
-      h("span",{style:{color:C.teal,fontWeight:"bold"}},"⚕️ Dcode Ward History"),
-      " · Created by ",
-      h("span",{style:{color:C.navy,fontWeight:"bold"}},"Maria Sultana Hira"),
-      " · Always verify with your clinical supervisor"
-    )
-  );
+  <footer class="footer">
+    <span style="color:${C.teal};font-weight:bold">⚕ Dcode Ward History</span>
+    · Created by <span style="color:${C.navy};font-weight:bold">Maria Sultana Hira</span>
+    · Always verify with your clinical supervisor
+  </footer>
+  `;
 }
 
-const root=ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
+function guideTab(s,L,allP){
+  const pct=Math.round(((state.si+1)/STEPS.length)*100);
+  return `
+  <div style="margin-bottom:18px">
+    <div class="progress-row"><span>STEP ${state.si+1} / ${STEPS.length}</span><span style="color:${s.color};font-weight:bold">${pct}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:linear-gradient(90deg,${s.color},${s.color}bb)"></div></div>
+  </div>
+  <div class="pills">
+    ${STEPS.map((x,i)=>`<button class="pill" style="border-color:${i===state.si?x.color:C.border};background:${i===state.si?x.color:"#fff"};color:${i===state.si?"#fff":C.muted};box-shadow:${i===state.si?"0 2px 10px "+x.color+"44":"none"}" onclick="setState({si:${i},mnem:null})">${x.code}</button>`).join("")}
+  </div>
+  <div class="step-card">
+    <div class="step-header" style="background:linear-gradient(135deg,${s.color},${s.color}bb)">
+      <div class="step-header-top">
+        <div class="step-icon-box">
+          <div class="step-icon">${s.emoji}</div>
+          <div>
+            <div class="step-code">${s.code}</div>
+            <div class="step-title">${s.title}</div>
+            ${(L==="both"||L==="bn")?`<div class="step-title-bn">${s.title_bn}</div>`:""}
+          </div>
+        </div>
+        <button class="pronounce-btn" onclick="speak('${s.audio}')">
+          <span style="font-size:16px">${state.spk?"🔊":"🔉"}</span> PRONOUNCE
+        </button>
+      </div>
+      <p class="step-subtitle">${(L==="en"||L==="both")?s.subtitle:""}${L==="both"?" · ":""}${(L==="bn"||L==="both")?s.subtitle_bn:""}</p>
+    </div>
+    <div class="step-body">
+      <div class="q-label">🎙 Key Questions</div>
+      <div class="questions">
+        ${s.prompts.map((q,i)=>`
+        <div class="q-item" style="background:${s.light};border-left-color:${s.color}">
+          <span class="q-num" style="background:${s.color}">${i+1}</span>
+          <div style="flex:1">
+            ${(L==="en"||L==="both")?`<div class="q-en" style="color:#1E2D3D">"${q.en}"</div>`:""}
+            ${(L==="bn"||L==="both")?`<div class="q-bn" style="color:${s.color}">"${q.bn}"</div>`:""}
+          </div>
+          <button class="q-speak" onclick="speak('${q.en.replace(/'/g,"\\'")}')">🔊</button>
+        </div>`).join("")}
+      </div>
+      <div class="tip-box">
+        <div class="tip-label">💡 CLINICAL TIP</div>
+        ${(L==="en"||L==="both")?`<p class="tip-en">${s.tip.en}</p>`:""}
+        ${(L==="bn"||L==="both")?`<p class="tip-bn">${s.tip.bn}</p>`:""}
+      </div>
+      ${s.mnemonics.map(m=>`
+      <button class="mnem-btn" style="background:${s.light};border-color:${s.color}44;color:${s.color}" onclick="setState({mnem:state.mnem==='${m.name}'?null:'${m.name}'})">
+        🧠 MNEMONIC: ${m.name} <span style="margin-left:auto">${state.mnem===m.name?"▲ Hide":"▼ Reveal"}</span>
+      </button>
+      ${state.mnem===m.name?`
+      <div class="mnem-grid">
+        ${m.items.map(it=>`<button class="mnem-item" style="background:${s.light};border-color:${s.color}44" onclick="speak('${it}')">
+          <div class="mnem-letter" style="color:${s.color}">${it[0]}</div>
+          <div class="mnem-word">${it}</div>
+          <div class="mnem-tap" style="color:${s.color}">🔊 tap</div>
+        </button>`).join("")}
+      </div>`:""}
+      `).join("")}
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="nav-back" onclick="setState({si:Math.max(0,state.si-1),mnem:null})" ${state.si===0?"disabled":""} style="color:${state.si===0?C.border:"#1E2D3D"}">← Back</button>
+    <button class="nav-next" onclick="setState({si:Math.min(${STEPS.length-1},state.si+1),mnem:null})" ${state.si===STEPS.length-1?"disabled":""} style="background:${state.si===STEPS.length-1?"#ccc":"linear-gradient(135deg,"+s.color+","+s.color+"bb)"};box-shadow:${state.si===STEPS.length-1?"none":"0 3px 12px "+s.color+"44"}">Next Step →</button>
+  </div>
+  <div class="flow-map">
+    <div class="flow-label">📍 Full History Flow</div>
+    <div class="flow-row">
+      ${STEPS.map((x,i)=>`
+      <button class="flow-item" style="background:${i===state.si?x.color:"#F7FAFC"};border-color:${i===state.si?x.color:C.border};box-shadow:${i===state.si?"0 2px 10px "+x.color+"44":"none"}" onclick="setState({si:${i},mnem:null})">
+        <span class="flow-emoji">${x.emoji}</span>
+        <span class="flow-code" style="color:${i===state.si?"#fff":x.color}">${x.code}</span>
+      </button>
+      ${i<STEPS.length-1?`<div class="flow-line"></div>`:""}`).join("")}
+    </div>
+  </div>`;
+}
+
+function practiceTab(curP,allP){
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2 style="font-family:monospace;color:${C.navy};margin:0;font-size:14px;letter-spacing:2px;text-transform:uppercase">🏋 Practice Mode</h2>
+      <p style="color:${C.muted};font-size:11px;margin:3px 0 0;font-family:monospace">Real ward scenarios — think before you reveal</p>
+    </div>
+    <div class="score-box"><div class="score-label">SCORE</div><div class="score-val">${state.score.c}/${state.score.t}</div></div>
+  </div>
+  <div class="step-card" style="border:2px solid ${curP.color}33">
+    <div style="background:${curP.light};border-bottom:2px solid ${curP.color}22;padding:12px 20px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">${curP.emoji}</span>
+      <span style="font-family:monospace;font-weight:bold;color:${curP.color};font-size:12px">${curP.code}</span>
+      <span style="font-family:monospace;font-size:10px;color:${C.muted}">CASE #${(state.pi%allP.length)+1} of ${allP.length}</span>
+    </div>
+    <div style="padding:22px">
+      <div style="font-family:monospace;font-size:9px;color:${C.muted};letter-spacing:3px;margin-bottom:8px">📋 SCENARIO</div>
+      <p class="scenario-box">${curP.scenario}</p>
+      ${!state.showAns
+        ?`<button class="reveal-btn" style="background:linear-gradient(135deg,${curP.color},${curP.color}bb)" onclick="setState({showAns:true})">💡 Reveal Best Approach</button>`
+        :`<div>
+          <div style="font-family:monospace;font-size:9px;color:${C.lime};letter-spacing:3px;margin-bottom:8px">✅ SUGGESTED APPROACH</div>
+          <div class="answer-box">${curP.answer}</div>
+          <div style="display:flex;gap:10px">
+            <button class="got-it" onclick="setState({score:{c:state.score.c+1,t:state.score.t+1},showAns:false,pi:state.pi+1})">✅ Got it!</button>
+            <button class="need-more" onclick="setState({score:{c:state.score.c,t:state.score.t+1},showAns:false,pi:state.pi+1})">❌ Need more practice</button>
+          </div>
+        </div>`}
+    </div>
+  </div>
+  <div class="scenarios-list">
+    <div class="scenarios-header">ALL SCENARIOS (${allP.length})</div>
+    ${allP.map((p,i)=>`
+    <div class="scenario-row" style="background:${i===state.pi%allP.length?p.light:"transparent"}" onclick="setState({pi:${i},showAns:false})">
+      <span style="font-size:14px">${p.emoji}</span>
+      <span style="font-family:monospace;font-size:10px;color:${p.color};min-width:32px;font-weight:bold">${p.code}</span>
+      <span style="font-size:12px;color:${C.muted};flex:1">${p.scenario}</span>
+      ${i===state.pi%allP.length?`<span style="color:${p.color};font-size:11px">▶</span>`:""}
+    </div>`).join("")}
+  </div>`;
+}
+
+function communityTab(){
+  return `
+  <h2 style="font-family:monospace;color:${C.navy};margin:0 0 4px;font-size:14px;letter-spacing:2px;text-transform:uppercase">💬 Student Tips</h2>
+  <p style="color:${C.muted};font-size:11px;margin-bottom:18px">শিক্ষার্থীদের টিপস শেয়ার করুন · Share your ward tricks</p>
+  <div class="post-box">
+    <div style="font-family:monospace;font-size:10px;color:${C.muted};letter-spacing:2px;margin-bottom:12px;text-transform:uppercase">✍️ Post Your Idea</div>
+    <select class="sel" onchange="state.newStep=this.value">
+      ${STEPS.map(s=>`<option value="${s.code}" ${state.newStep===s.code?"selected":""}>${s.code} — ${s.title}</option>`).join("")}
+    </select>
+    <textarea class="ta" rows="2" placeholder="Write your tip in English or Bangla..." oninput="state.newText=this.value" style="margin-bottom:8px">${state.newText}</textarea>
+    <textarea class="ta" rows="2" placeholder="(Optional) English translation..." oninput="state.newEn=this.value" style="margin-bottom:12px;color:${C.muted}">${state.newEn}</textarea>
+    <button class="post-btn" onclick="postIdea()">POST →</button>
+  </div>
+  <div>
+    ${state.ideas.map(idea=>{
+      const s=STEPS.find(x=>x.code===idea.step);
+      return `<div class="idea-card" style="border-left:4px solid ${s?.color||"#999"}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <span class="idea-tag" style="background:${s?.color}">${idea.step}</span>
+          <span style="font-family:monospace;font-size:11px;color:${C.muted}">by ${idea.author}</span>
+        </div>
+        <p style="margin:0 0 5px;font-size:14px;line-height:1.7">${idea.text}</p>
+        ${idea.bn?`<p style="margin:0 0 10px;font-size:12px;line-height:1.6;color:${C.muted};font-style:italic">${idea.bn}</p>`:""}
+        <button class="like-btn" style="background:${state.liked.includes(idea.id)?"#FAEAEE":"#F4F8FC"};border-color:${state.liked.includes(idea.id)?C.rose:C.border};color:${state.liked.includes(idea.id)?C.rose:C.muted}" onclick="toggleLike(${idea.id})">
+          ${state.liked.includes(idea.id)?"❤️":"🤍"} ${idea.likes}
+        </button>
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+function notepadTab(){
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2 style="font-family:monospace;color:${C.navy};margin:0;font-size:14px;letter-spacing:2px;text-transform:uppercase">📝 Patient Notepad</h2>
+      <p style="color:${C.muted};font-size:11px;margin:3px 0 0;font-family:monospace">${state.loggedIn?"Saving as "+state.user.name+" · ":"Login to save · "}রোগীর নোট</p>
+    </div>
+    <button class="copy-btn" style="background:${state.copied?C.lime:C.navy}" onclick="copyNotes()">
+      ${state.copied?"✓ Copied!":"⬆ Copy All"}
+    </button>
+  </div>
+  ${!state.loggedIn?`<div class="save-banner">
+    <span style="font-size:18px">🔐</span>
+    <div style="flex:1">
+      <div style="color:#B7841A;font-family:monospace;font-size:11px;font-weight:bold">Login to save notes permanently</div>
+      <div style="color:${C.muted};font-size:11px;margin-top:2px">Notes only last this session</div>
+    </div>
+    <button style="padding:6px 14px;background:#F5A62322;border:1px solid ${C.amber};color:${C.amber};border-radius:9px;font-family:monospace;font-size:11px;font-weight:bold" onclick="setState({tab:'login'})">Login →</button>
+  </div>`:""}
+  ${STEPS.map(s=>`
+  <div class="note-card">
+    <div class="note-header" style="background:linear-gradient(135deg,${s.color},${s.color}bb)">
+      <span style="font-size:14px">${s.emoji}</span>
+      <div>
+        <span style="font-family:monospace;font-weight:bold;font-size:12px;color:#fff">${s.code} — ${s.title}</span>
+        <div style="font-size:9px;color:rgba(255,255,255,.75)">${s.title_bn}</div>
+      </div>
+    </div>
+    <textarea rows="3" style="width:100%;padding:12px 16px;border:none;font-family:Georgia,serif;font-size:13px;line-height:1.7;resize:vertical;box-sizing:border-box;color:#1E2D3D;background:#F7FAFC" placeholder="Notes for ${s.title}..." oninput="state.notes['${s.id}']=this.value">${state.notes[s.id]||""}</textarea>
+  </div>`).join("")}`;
+}
+
+function loginTab(){
+  return `<div class="login-center">
+  <div class="login-card">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:36px;margin-bottom:7px">🔐</div>
+      <div style="font-size:18px;font-weight:bold;font-family:monospace;color:${C.navy}">${state.lv==="login"?"Welcome Back":"Create Account"}</div>
+      <div style="font-size:11px;color:${C.muted};margin-top:3px">Save your notes across sessions</div>
+    </div>
+    ${state.ferr?`<div class="err-box">${state.ferr}</div>`:""}
+    ${state.lv==="signup"?`<input class="inp" type="text" placeholder="Your name" value="${state.fname}" oninput="state.fname=this.value"/>`:""}
+    <input class="inp" type="email" placeholder="Email address" value="${state.femail}" oninput="state.femail=this.value"/>
+    <input class="inp" type="password" placeholder="Password" style="margin-bottom:20px" value="${state.fpass}" oninput="state.fpass=this.value"/>
+    <button class="login-submit" onclick="doLogin()">${state.lv==="login"?"🔐 Login":"🚀 Create Account"}</button>
+    <div style="text-align:center;margin-top:14px;font-size:12px;color:${C.muted}">
+      ${state.lv==="login"?"Don't have an account? ":"Already have an account? "}
+      <button style="background:none;border:none;color:${C.teal};cursor:pointer;font-size:12px;font-family:monospace;text-decoration:underline" onclick="setState({lv:state.lv==='login'?'signup':'login',ferr:''})">
+        ${state.lv==="login"?"Sign Up":"Login"}
+      </button>
+    </div>
+  </div></div>`;
+}
+
+function printModal(){
+  return `<div class="print-modal">
+  <div class="print-inner">
+    <div class="print-header">
+      <span style="color:#fff;font-family:monospace;font-weight:bold;font-size:13px">⚕ Dcode Ward History · Cheat Sheet</span>
+      <button style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:7px;padding:5px 12px;font-size:12px" onclick="setState({showPrint:false})">✕ Close</button>
+    </div>
+    <div style="padding:20px">
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:18px;font-weight:bold;color:${C.navy};font-family:Georgia,serif">⚕ Dcode Ward History</div>
+        <div style="font-size:10px;color:#888;margin-top:2px">Patient History-Taking · EN + বাংলা · By Maria Sultana Hira</div>
+      </div>
+      <div class="print-grid">
+        ${STEPS.map(s=>`
+        <div class="print-step" style="border-color:${s.color}">
+          <div class="print-step-header" style="background:${s.color}">
+            <span style="font-size:13px">${s.emoji}</span>
+            <div>
+              <div style="color:#fff;font-weight:bold;font-size:11px">${s.code} — ${s.title}</div>
+              <div style="color:rgba(255,255,255,.85);font-size:8px">${s.title_bn}</div>
+            </div>
+          </div>
+          <div class="print-step-body">
+            ${s.prompts.slice(0,3).map(p=>`<div style="border-left:3px solid ${s.color};padding-left:6px;margin-bottom:4px"><div style="font-size:9px;color:#222;line-height:1.4">${p.en}</div><div style="font-size:8px;color:#777">${p.bn}</div></div>`).join("")}
+            ${s.mnemonics.map(m=>`<div style="margin-top:6px;background:${s.color}18;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:bold;color:${s.color};margin-bottom:2px">🧠 ${m.name}</div><div style="display:flex;flex-wrap:wrap;gap:2px">${m.items.map(it=>`<span style="background:${s.color};color:#fff;border-radius:3px;padding:1px 5px;font-size:7px"><b>${it[0]}</b>${it.slice(1)}</span>`).join("")}</div></div>`).join("")}
+            <div style="margin-top:5px;font-size:8px;color:#555;font-style:italic;border-top:1px dashed #e0e0e0;padding-top:4px">💡 ${s.tip.en}</div>
+          </div>
+        </div>`).join("")}
+      </div>
+      <div style="margin-top:12px;text-align:center;font-size:8px;color:#aaa;border-top:1px solid #eee;padding-top:8px">Dcode Ward History · Created by Maria Sultana Hira · Always verify with your clinical supervisor</div>
+    </div>
+    <div style="padding:11px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end;background:#f9f9f9;border-radius:0 0 16px 16px">
+      <button style="padding:9px 24px;background:${C.teal};color:#fff;border:none;border-radius:9px;font-weight:bold;font-size:13px" onclick="window.print()">🖨 Print / Save PDF</button>
+    </div>
+  </div></div>`;
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────
+function toggleLike(id){
+  if(state.liked.includes(id)){
+    state.liked=state.liked.filter(x=>x!==id);
+    state.ideas=state.ideas.map(i=>i.id===id?{...i,likes:i.likes-1}:i);
+  }else{
+    state.liked=[...state.liked,id];
+    state.ideas=state.ideas.map(i=>i.id===id?{...i,likes:i.likes+1}:i);
+  }
+  render();
+}
+
+function postIdea(){
+  if(!state.newText.trim())return;
+  state.ideas=[{id:Date.now(),author:state.loggedIn?state.user.name+" (You)":"You",step:state.newStep,text:state.newText,bn:state.newEn,likes:0},...state.ideas];
+  state.newText="";state.newEn="";
+  showToast("✅ Posted!");
+}
+
+function copyNotes(){
+  const txt=STEPS.map(s=>"## "+s.title+"\n"+(state.notes[s.id]||"(empty)")).join("\n\n");
+  navigator.clipboard.writeText(txt).catch(()=>{});
+  state.copied=true;render();
+  showToast("📋 Notes copied!");
+  setTimeout(()=>{state.copied=false;render();},2200);
+}
+
+function doLogin(){
+  if(!state.femail||!state.fpass){state.ferr="Please fill all fields.";render();return;}
+  const n=state.fname||state.femail.split("@")[0];
+  state.user={name:n,email:state.femail};
+  state.loggedIn=true;state.ferr="";state.tab="guide";
+  showToast("👋 Welcome, "+n+"!");
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+render();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
 </script>
 </body>
 </html>
