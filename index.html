@@ -10,84 +10,6 @@
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="icon-180.png"/>
 <title>Dcode Ward History</title>
-
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, getDocs, addDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAvgkCUO_RaDKcsdm6BNbvEc6YODQO0Tn8",
-    authDomain: "dcode-ward-history.firebaseapp.com",
-    projectId: "dcode-ward-history",
-    storageBucket: "dcode-ward-history.firebasestorage.app",
-    messagingSenderId: "271415465873",
-    appId: "1:271415465873:web:784430636435e8c92d2c30"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
-
-  // ── AUTH STATE ─────────────────────────────────────────────
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      window._user = { name: user.displayName, email: user.email, photo: user.photoURL, uid: user.uid };
-      // Save user to Firestore
-      await setDoc(doc(db, "users", user.uid), { name: user.displayName, email: user.email }, { merge: true });
-      // Load saved notes
-      const notesDoc = await getDoc(doc(db, "notes", user.uid));
-      if (notesDoc.exists()) window._savedNotes = notesDoc.data();
-    } else {
-      window._user = null;
-    }
-    if (window._appReady) window._render();
-  });
-
-  // ── GOOGLE LOGIN ───────────────────────────────────────────
-  window._googleLogin = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-    } catch(e) { alert("Login failed. Please try again."); }
-  };
-
-  // ── LOGOUT ────────────────────────────────────────────────
-  window._logout = async () => {
-    await signOut(auth);
-  };
-
-  // ── SAVE NOTES ────────────────────────────────────────────
-  window._saveNotes = async (notes) => {
-    if (!window._user) return;
-    await setDoc(doc(db, "notes", window._user.uid), notes, { merge: true });
-  };
-
-  // ── LOAD IDEAS ────────────────────────────────────────────
-  window._loadIdeas = async () => {
-    const snap = await getDocs(collection(db, "ideas"));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  };
-
-  // ── POST IDEA ────────────────────────────────────────────
-  window._postIdea = async (idea) => {
-    await addDoc(collection(db, "ideas"), idea);
-  };
-
-  // ── LIKE IDEA ────────────────────────────────────────────
-  window._likeIdea = async (id) => {
-    await updateDoc(doc(db, "ideas", id), { likes: increment(1) });
-  };
-
-  window._unlikeIdea = async (id) => {
-    await updateDoc(doc(db, "ideas", id), { likes: increment(-1) });
-  };
-
-  window._appReady = true;
-  if (window._render) window._render();
-</script>
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:Georgia,serif;background:#F0F4F8;color:#1E2D3D;}
@@ -98,113 +20,53 @@ textarea:focus,input:focus,select:focus{outline:2px solid #2E8B8B;}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:#DCE8F0;border-radius:10px;}
 .header{background:linear-gradient(135deg,#1A3557,#1E4976);padding:14px 16px 10px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(26,53,87,.3);}
-.logo-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-icon{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:12px;padding:7px 11px;font-size:22px;}
-.logo-title{font-size:17px;font-weight:bold;font-family:monospace;color:#fff;}
-.logo-sub{font-size:9px;color:rgba(255,255,255,.6);font-family:monospace;}
-.header-right{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-.lang-toggle{display:flex;background:rgba(255,255,255,.1);border-radius:20px;padding:3px;gap:2px;}
-.lang-btn{padding:3px 10px;border-radius:16px;border:none;font-size:10px;font-weight:bold;cursor:pointer;transition:all .2s;}
-.lang-btn.active{background:#fff;color:#1A3557;}
-.lang-btn:not(.active){background:transparent;color:rgba(255,255,255,.75);}
-.header-btn{padding:5px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;font-size:11px;font-family:monospace;}
-.google-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:#fff;border:none;color:#1A3557;border-radius:20px;font-size:11px;font-family:monospace;font-weight:bold;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-.user-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;}
-.user-photo{width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.4);}
-.user-name{font-size:11px;color:#fff;font-family:monospace;}
-.logout-btn{background:none;border:none;color:rgba(255,255,255,.5);font-size:10px;font-family:monospace;}
 .tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 .tab-btn{padding:5px 14px;border-radius:20px;border:none;font-size:11px;font-family:monospace;transition:all .2s;}
 .tab-btn.active{background:#fff;color:#1A3557;font-weight:bold;}
 .tab-btn:not(.active){background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
 .main{max-width:900px;margin:0 auto;padding:20px 14px 50px;}
 .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1A3557;color:#fff;border:1px solid #2E8B8B;padding:9px 22px;border-radius:28px;z-index:3000;font-family:monospace;font-size:12px;box-shadow:0 5px 20px rgba(0,0,0,.15);white-space:nowrap;}
-.progress-row{display:flex;justify-content:space-between;font-size:10px;font-family:monospace;color:#6B8299;margin-bottom:5px;}
-.progress-bar{height:6px;background:#DCE8F0;border-radius:10px;overflow:hidden;}
-.progress-fill{height:100%;border-radius:10px;transition:width .4s;}
-.pills{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0;}
-.pill{padding:5px 14px;border-radius:20px;border:2px solid;font-size:11px;font-weight:bold;font-family:monospace;transition:all .2s;}
-.step-card{background:#fff;border-radius:18px;box-shadow:0 6px 24px rgba(26,53,87,.1);overflow:hidden;margin-bottom:16px;border:1px solid #DCE8F0;}
-.step-header{padding:20px 22px;}
-.step-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-.step-icon-box{display:flex;align-items:center;gap:12px;}
-.step-icon{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3);border-radius:14px;padding:8px 12px;font-size:26px;}
-.step-code{font-size:9px;font-family:monospace;color:rgba(255,255,255,.8);letter-spacing:3px;margin-bottom:2px;}
-.step-title{font-size:18px;font-weight:bold;color:#fff;}
-.step-title-bn{font-size:12px;color:rgba(255,255,255,.85);margin-top:2px;}
-.step-subtitle{margin:10px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,.9);}
-.pronounce-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:7px 12px;flex-shrink:0;font-size:11px;font-family:monospace;}
-.step-body{padding:20px;}
-.q-label{font-family:monospace;font-size:9px;color:#6B8299;letter-spacing:3px;margin-bottom:10px;text-transform:uppercase;}
-.questions{display:flex;flex-direction:column;gap:9px;}
-.q-item{display:flex;gap:10px;padding:11px 14px;border-radius:11px;border-left:4px solid;align-items:flex-start;}
+.card{background:#fff;border-radius:18px;box-shadow:0 6px 24px rgba(26,53,87,.1);overflow:hidden;margin-bottom:16px;border:1px solid #DCE8F0;}
+.progress-bar{height:6px;background:#DCE8F0;border-radius:10px;overflow:hidden;margin-bottom:18px;}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.pill{padding:5px 14px;border-radius:20px;border:2px solid;font-size:11px;font-weight:bold;font-family:monospace;}
+.q-item{display:flex;gap:10px;padding:11px 14px;border-radius:11px;border-left:4px solid;margin-bottom:9px;align-items:flex-start;}
 .q-num{border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;flex-shrink:0;margin-top:2px;color:#fff;}
-.q-en{font-size:13px;font-style:italic;line-height:1.5;}
-.q-bn{font-size:12px;line-height:1.5;margin-top:2px;}
-.q-speak{background:none;border:none;font-size:14px;opacity:.5;flex-shrink:0;}
 .tip-box{background:#FFFBF0;border:1px solid #F5D87A;border-radius:11px;padding:12px 16px;margin-top:16px;}
-.tip-label{font-family:monospace;font-size:9px;color:#B7841A;letter-spacing:3px;margin-bottom:5px;}
-.mnem-btn{display:flex;align-items:center;gap:8px;border:2px solid;border-radius:11px;padding:10px 16px;width:100%;text-align:left;margin-top:16px;font-family:monospace;font-weight:bold;font-size:12px;}
 .mnem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px;}
-.mnem-item{border:1.5px solid;border-radius:11px;padding:10px 8px;text-align:center;}
-.nav-row{display:flex;gap:10px;justify-content:space-between;margin-top:16px;}
-.nav-back{padding:10px 20px;border-radius:11px;border:2px solid #DCE8F0;background:#fff;font-family:monospace;font-weight:bold;font-size:12px;}
-.nav-next{padding:10px 24px;border-radius:11px;border:none;color:#fff;font-family:monospace;font-weight:bold;font-size:12px;}
-.flow-map{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 3px 14px rgba(26,53,87,.07);border:1px solid #DCE8F0;margin-top:20px;}
-.flow-label{font-family:monospace;font-size:9px;color:#6B8299;letter-spacing:3px;margin-bottom:12px;text-transform:uppercase;}
-.flow-row{display:flex;align-items:center;flex-wrap:wrap;gap:5px;}
-.flow-item{display:flex;flex-direction:column;align-items:center;gap:3px;border:2px solid;border-radius:11px;padding:8px 10px;min-width:52px;transition:all .2s;}
-
-/* Greeting card */
-.greeting-card{background:#fff;border-radius:18px;box-shadow:0 6px 24px rgba(26,53,87,.1);overflow:hidden;margin-bottom:16px;border:1px solid #DCE8F0;}
-.greeting-header{background:linear-gradient(135deg,#1A3557,#1E4976);padding:20px 22px;color:#fff;}
-.greeting-script{background:#F7FAFC;border-left:4px solid #2E8B8B;border-radius:0 11px 11px 0;padding:14px 18px;margin:10px 0;font-style:italic;line-height:1.8;color:#1E2D3D;font-size:14px;}
-.greeting-tip{background:#FFFBF0;border:1px solid #F5D87A;border-radius:11px;padding:12px 16px;margin-top:12px;}
-
-/* Practice */
+.flow-row{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:12px;}
+.flow-item{display:flex;flex-direction:column;align-items:center;gap:3px;border:2px solid;border-radius:11px;padding:8px 10px;min-width:52px;}
+.greeting-script{background:#F7FAFC;border-left:4px solid #2E8B8B;border-radius:0 11px 11px 0;padding:14px 18px;margin:10px 0;font-style:italic;line-height:1.8;font-size:14px;}
+.inp{width:100%;padding:10px 13px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;margin-bottom:11px;box-sizing:border-box;}
+.sel{width:100%;padding:9px 12px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:12px;font-family:monospace;margin-bottom:10px;box-sizing:border-box;}
+.ta{width:100%;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;resize:vertical;box-sizing:border-box;padding:10px 12px;}
+.login-card{background:#fff;border:1px solid #DCE8F0;border-radius:18px;padding:30px;width:100%;max-width:400px;box-shadow:0 8px 36px rgba(26,53,87,.12);}
+.login-center{display:flex;align-items:center;justify-content:center;min-height:55vh;}
+.submit-btn{width:100%;padding:12px;background:linear-gradient(135deg,#1A3557,#1E4976);border:none;border-radius:11px;color:#fff;font-weight:bold;font-size:14px;font-family:monospace;}
+.idea-card{background:#fff;border-radius:12px;padding:18px;border:1px solid #DCE8F0;margin-bottom:10px;}
+.note-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #DCE8F0;margin-bottom:12px;}
+.print-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:14px;}
+.print-inner{background:#fff;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow:auto;}
+.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
 .score-box{background:#fff;border:2px solid #4CAF7D;border-radius:12px;padding:7px 18px;text-align:center;}
-.score-val{font-family:monospace;font-size:20px;font-weight:bold;color:#4CAF7D;}
-.scenario-box{font-size:15px;line-height:1.7;background:#F7FAFC;border-radius:11px;padding:14px 18px;border:1px solid #DCE8F0;margin:0 0 18px;}
 .reveal-btn{width:100%;padding:13px;border:none;border-radius:11px;color:#fff;font-weight:bold;font-size:13px;font-family:monospace;}
 .answer-box{background:#EAF6EF;border:1.5px solid #4CAF7D;border-radius:11px;padding:14px 18px;font-size:14px;line-height:1.7;color:#2D6A4F;margin-bottom:16px;}
-
-/* Community */
-.post-box{background:#fff;border-radius:14px;border:1px solid #DCE8F0;padding:20px;margin-bottom:18px;}
-.idea-card{background:#fff;border-radius:12px;padding:18px;border:1px solid #DCE8F0;margin-bottom:10px;}
-.like-btn{display:flex;align-items:center;gap:5px;border-radius:18px;padding:4px 12px;font-size:12px;font-family:monospace;border:1px solid;}
-.login-required{background:#F7FAFC;border:2px dashed #DCE8F0;border-radius:12px;padding:20px;text-align:center;margin-bottom:18px;}
-
-/* Notepad */
-.note-card{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #DCE8F0;margin-bottom:12px;}
-.note-header{padding:9px 16px;display:flex;align-items:center;gap:7px;}
-.save-banner{background:#FFFBF0;border:1px solid #F5D87A;border-radius:11px;padding:11px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
-
-/* Print */
-.print-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:14px;}
-.print-inner{background:#fff;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
-.print-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
-
-.inp{width:100%;padding:10px 13px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;font-family:Georgia,serif;margin-bottom:11px;box-sizing:border-box;}
-.sel{width:100%;padding:9px 12px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:12px;font-family:monospace;margin-bottom:10px;box-sizing:border-box;}
-.ta{width:100%;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;font-family:Georgia,serif;resize:vertical;box-sizing:border-box;padding:10px 12px;}
-.post-btn{padding:9px 22px;background:linear-gradient(135deg,#1A3557,#1E4976);color:#fff;border:none;border-radius:9px;font-family:monospace;font-weight:bold;font-size:12px;}
-.copy-btn{padding:8px 18px;color:#fff;border:none;border-radius:9px;font-family:monospace;font-size:11px;font-weight:bold;transition:background .3s;}
+.login-wall{background:#F7FAFC;border:2px dashed #DCE8F0;border-radius:12px;padding:24px;text-align:center;margin-bottom:18px;}
 .footer{text-align:center;padding:14px;font-family:monospace;font-size:10px;color:#6B8299;border-top:1px solid #DCE8F0;background:#fff;}
-@media print{header,.tabs,.nav-row,.footer,button{display:none!important;}}
+@media print{header,.tabs,.footer,button{display:none!important;}}
 </style>
 </head>
 <body>
-<div id="app"><div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace;color:#6B8299">Loading Dcode Ward History...</div></div>
-
+<div id="app"></div>
 <script>
+// ── COLORS & DATA ──────────────────────────────────────────
 const C={navy:"#1A3557",teal:"#2E8B8B",cyan:"#3AAFCF",lime:"#4CAF7D",amber:"#F5A623",rose:"#D95F7A",purple:"#7B6FCC",orange:"#E07B4A",muted:"#6B8299",border:"#DCE8F0",lightBg:"#F7FAFC"};
 
 const STEPS=[
   {id:"pc",code:"PC",emoji:"🩺",color:C.teal,light:"#E8F6F6",title:"Presenting Complaint",title_bn:"প্রধান অভিযোগ",subtitle:"Chief reason — in the patient's own words",subtitle_bn:"রোগীর নিজের ভাষায় আসার কারণ",audio:"Presenting Complaint",
    prompts:[{en:"What brings you in today?",bn:"আজ কী সমস্যা নিয়ে এসেছেন?"},{en:"What is the main problem you are experiencing?",bn:"আপনার প্রধান সমস্যাটি কী?"},{en:"How long have you had this problem?",bn:"কতদিন ধরে এই সমস্যা?"}],
    tip:{en:"Use open-ended questions. Let the patient speak first.",bn:"উন্মুক্ত প্রশ্ন করুন। রোগীকে প্রথমে কথা বলতে দিন।"},mnemonics:[],
-   practice:[{scenario:"A 45-year-old man walks in holding his chest.",answer:"Start with 'What brings you in today?' — let him describe in his own words first."},{scenario:"An elderly woman says 'I don't feel well.'",answer:"Ask 'Can you tell me more about what you're feeling?' — avoid yes/no questions."}]},
+   practice:[{scenario:"A 45-year-old man walks in holding his chest.",answer:"Start with 'What brings you in today?' — let him describe in his own words first."},{scenario:"An elderly woman says 'I don't feel well.'",answer:"Ask 'Can you tell me more?' — avoid yes/no questions at this stage."}]},
   {id:"hpc",code:"HPC",emoji:"🔬",color:C.cyan,light:"#EAF6FB",title:"History of Presenting Complaint",title_bn:"বর্তমান অভিযোগের ইতিহাস",subtitle:"Deep-dive using SOCRATES framework",subtitle_bn:"SOCRATES পদ্ধতিতে বিশ্লেষণ",audio:"History of Presenting Complaint",
    prompts:[{en:"When exactly did it start?",bn:"এটা ঠিক কখন শুরু হয়েছিল?"},{en:"Did it come on suddenly or gradually?",bn:"হঠাৎ নাকি আস্তে আস্তে?"},{en:"What makes it better or worse?",bn:"কিসে ভালো বা খারাপ হয়?"},{en:"Rate severity 1-10.",bn:"১ থেকে ১০ এ কতটুকু?"}],
    tip:{en:"Always ask about associated symptoms — never stop at the chief complaint.",bn:"সংশ্লিষ্ট উপসর্গ সম্পর্কে সবসময় জিজ্ঞেস করুন।"},
@@ -225,36 +87,60 @@ const STEPS=[
    practice:[{scenario:"Young patient with chest pain, father died at 50.",answer:"Explore family cardiac history — premature CAD is hereditary. Ask about cholesterol, sudden deaths."}]},
   {id:"sh",code:"SH",emoji:"🏙",color:C.orange,light:"#FDF0E8",title:"Social History",title_bn:"সামাজিক ইতিহাস",subtitle:"Occupation, lifestyle, habits & support system",subtitle_bn:"পেশা, জীবনযাত্রা, অভ্যাস ও সামাজিক সহায়তা",audio:"Social History",
    prompts:[{en:"What is your occupation?",bn:"আপনার পেশা কী?"},{en:"Do you smoke or use tobacco?",bn:"ধূমপান বা তামাক সেবন করেন?"},{en:"Do you drink alcohol? How much per week?",bn:"মদ্যপান করেন? সপ্তাহে কতটুকু?"},{en:"Who lives with you at home?",bn:"বাড়িতে কারা থাকেন?"}],
-   tip:{en:"Be non-judgmental. Ask 'How much per week?' not 'Do you drink a lot?'",bn:"বিচার না করে জিজ্ঞেস করুন। 'কতটুকু?' জিজ্ঞেস করুন।"},
+   tip:{en:"Be non-judgmental. Ask 'How much per week?' not 'Do you drink a lot?'",bn:"বিচার না করে জিজ্ঞেস করুন।"},
    mnemonics:[{name:"SADMA",items:["Smoking","Alcohol","Drugs","Marital status","Activity/Occupation"]}],
    practice:[{scenario:"Patient seems reluctant to discuss habits.",answer:"Normalize: 'I ask everyone this so I can give the best care.' Non-judgmental tone opens doors."}]},
   {id:"ros",code:"ROS",emoji:"⚕",color:C.rose,light:"#FAEAEE",title:"Review of Systems",title_bn:"সিস্টেম রিভিউ",subtitle:"Systematic screening of all body systems",subtitle_bn:"সমস্ত অঙ্গতন্ত্রের পদ্ধতিগত পর্যালোচনা",audio:"Review of Systems",
    prompts:[{en:"Any headaches, dizziness, or vision changes?",bn:"মাথাব্যথা, মাথা ঘোরা বা দৃষ্টি পরিবর্তন?"},{en:"Any chest pain or shortness of breath?",bn:"বুকে ব্যথা বা শ্বাসকষ্ট?"},{en:"Any nausea, vomiting, or bowel changes?",bn:"বমি ভাব, বমি বা পেটের সমস্যা?"},{en:"Any urinary symptoms?",bn:"প্রস্রাবের কোনো সমস্যা?"}],
-   tip:{en:"Screen by system — only drill deeper if positive.",bn:"প্রতিটি সিস্টেম স্ক্রিন করুন — পজিটিভ হলেই বিস্তারিত জিজ্ঞেস করুন।"},mnemonics:[],
+   tip:{en:"Screen by system — only drill deeper if positive.",bn:"প্রতিটি সিস্টেম স্ক্রিন করুন — পজিটিভ হলেই বিস্তারিত।"},mnemonics:[],
    practice:[{scenario:"You've completed HPC for abdominal pain.",answer:"Now screen: chest pain? urinary symptoms? fever? Systematic screening catches what focused history misses."}]}
 ];
 
-// ── STATE ──────────────────────────────────────────────────
-let state={
-  tab:"greeting",si:0,lang:"both",mnem:null,
-  ideas:[],liked:JSON.parse(localStorage.getItem("liked")||"[]"),
-  newStep:"HPC",newText:"",newEn:"",
-  notes:JSON.parse(localStorage.getItem("notes")||"{}"),
-  toast:"",copied:false,showPrint:false,
-  pi:0,showAns:false,score:{c:0,t:0}
+// ── STATE — all persisted in localStorage ─────────────────
+const LS={
+  get(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch{return def;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 };
 
+let state={
+  tab:"greeting",
+  si:LS.get("si",0),
+  lang:LS.get("lang","both"),
+  mnem:null,
+  user:LS.get("user",null),        // persists login!
+  ideas:LS.get("ideas",[
+    {id:1,author:"Rafiq - DMCH",step:"HPC",text:"Ask patient to point on a body diagram — faster than verbal description.",bn:"রোগীকে শরীরের ছবিতে আঙুল দিয়ে ব্যথার জায়গা দেখাতে বলুন।",likes:18},
+    {id:2,author:"Priya - Chittagong",step:"SH",text:"Ask 'How much per week?' not 'Do you drink a lot?' — more honest answers.",bn:"'সপ্তাহে কতটা?' জিজ্ঞেস করুন।",likes:25},
+    {id:3,author:"Lin - BIRDEM",step:"PMH",text:"Start PMH with 'Apart from this, how is your general health?'",bn:"'এই সমস্যা বাদে স্বাস্থ্য কেমন?' দিয়ে শুরু করুন।",likes:12}
+  ]),
+  liked:LS.get("liked",[]),
+  notes:LS.get("notes",{}),
+  newStep:"HPC",newText:"",newEn:"",
+  toast:"",copied:false,showPrint:false,
+  pi:0,showAns:false,score:{c:0,t:0},
+  // login form
+  lv:"login",fname:"",femail:"",fpass:"",ferr:""
+};
+
+function save(){
+  LS.set("si",state.si);
+  LS.set("lang",state.lang);
+  LS.set("user",state.user);
+  LS.set("ideas",state.ideas);
+  LS.set("liked",state.liked);
+  LS.set("notes",state.notes);
+}
+
 function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.87;window.speechSynthesis.speak(u);}
-function showToast(m){state.toast=m;render();setTimeout(()=>{state.toast="";render();},2200);}
+function toast(m){state.toast=m;render();setTimeout(()=>{state.toast="";render();},2200);}
 
 // ── RENDER ─────────────────────────────────────────────────
 function render(){
-  window._render=render;
-  const user=window._user;
   const s=STEPS[state.si];
+  const L=state.lang;
+  const u=state.user;
   const allP=STEPS.flatMap(x=>x.practice.map(p=>({...p,color:x.color,emoji:x.emoji,light:x.light,code:x.code})));
   const curP=allP[state.pi%allP.length];
-  const L=state.lang;
 
   document.getElementById("app").innerHTML=`
   ${state.toast?`<div class="toast">${state.toast}</div>`:""}
@@ -262,28 +148,26 @@ function render(){
 
   <header class="header">
     <div style="max-width:900px;margin:0 auto">
-      <div class="logo-row">
-        <div class="logo">
-          <div class="logo-icon">⚕</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:12px;padding:7px 11px;font-size:22px">⚕</div>
           <div>
-            <div class="logo-title">Dcode Ward History</div>
-            <div class="logo-sub">ডিকোড ওয়ার্ড হিস্ট্রি · BD & International</div>
+            <div style="font-size:17px;font-weight:bold;font-family:monospace;color:#fff">Dcode Ward History</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.6);font-family:monospace">ডিকোড ওয়ার্ড হিস্ট্রি · BD & International</div>
           </div>
         </div>
-        <div class="header-right">
-          <div class="lang-toggle">
-            ${["both","en","bn"].map(v=>`<button class="lang-btn ${state.lang===v?"active":""}" onclick="state.lang='${v}';render()">${v==="both"?"EN+বাং":v.toUpperCase()}</button>`).join("")}
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;background:rgba(255,255,255,.1);border-radius:20px;padding:3px;gap:2px">
+            ${["both","en","bn"].map(v=>`<button style="padding:3px 10px;border-radius:16px;border:none;font-size:10px;font-weight:bold;cursor:pointer;background:${state.lang===v?"#fff":"transparent"};color:${state.lang===v?"#1A3557":"rgba(255,255,255,.75)"}" onclick="state.lang='${v}';save();render()">${v==="both"?"EN+বাং":v.toUpperCase()}</button>`).join("")}
           </div>
-          <button class="header-btn" onclick="state.showPrint=true;render()">🖨 Print</button>
-          ${user
-            ?`<div class="user-badge">
-                ${user.photo?`<img src="${user.photo}" class="user-photo"/>`:`<span>👤</span>`}
-                <span class="user-name">${user.name.split(" ")[0]}</span>
-                <button class="logout-btn" onclick="window._logout()">out</button>
+          <button style="padding:5px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;font-size:11px;font-family:monospace" onclick="state.showPrint=true;render()">🖨 Print</button>
+          ${u
+            ?`<div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px">
+                <span style="font-size:14px">👤</span>
+                <span style="font-size:11px;color:#fff;font-family:monospace">${u.name.split(" ")[0]}</span>
+                <button style="background:none;border:none;color:rgba(255,255,255,.5);font-size:10px;font-family:monospace;cursor:pointer" onclick="state.user=null;save();render()">out</button>
               </div>`
-            :`<button class="google-btn" onclick="window._googleLogin()">
-                <img src="https://www.google.com/favicon.ico" width="14" height="14"/> Sign in with Google
-              </button>`
+            :`<button style="padding:6px 14px;background:rgba(255,255,255,.95);border:none;color:#1A3557;border-radius:20px;font-size:11px;font-family:monospace;font-weight:bold" onclick="state.tab='login';render()">🔐 Login</button>`
           }
         </div>
       </div>
@@ -297,8 +181,9 @@ function render(){
     ${state.tab==="greeting"?greetingTab(L):""}
     ${state.tab==="guide"?guideTab(s,L):""}
     ${state.tab==="practice"?practiceTab(curP,allP):""}
-    ${state.tab==="community"?communityTab(user):""}
-    ${state.tab==="notepad"?notepadTab(user):""}
+    ${state.tab==="community"?communityTab(u):""}
+    ${state.tab==="notepad"?notepadTab(u):""}
+    ${state.tab==="login"?loginTab():""}
   </div>
 
   <footer class="footer">
@@ -310,9 +195,32 @@ function render(){
 
 // ── GREETING TAB ───────────────────────────────────────────
 function greetingTab(L){
+  const steps2=[
+    {num:"1️⃣",label:"ENTERING THE ROOM",color:C.teal,
+     en:"Knock on the door, enter calmly. Make eye contact and smile. Stand at a comfortable distance.",
+     bn:"দরজায় টোকা দিন, শান্তভাবে প্রবেশ করুন। চোখে চোখ রাখুন এবং হাসুন।",
+     audio:"Knock on the door, enter calmly. Make eye contact and smile."},
+    {num:"2️⃣",label:"INTRODUCE YOURSELF",color:C.cyan,
+     en:`"Good morning. My name is [Your Name]. I am a medical student. I would like to ask you a few questions about your health today, if that's okay with you."`,
+     bn:`"আসসালামু আলাইকুম। আমার নাম [আপনার নাম]। আমি একজন মেডিকেল ছাত্র/ছাত্রী। আপনার স্বাস্থ্য সম্পর্কে কিছু প্রশ্ন করতে চাই, আপনি কি রাজি?"`,
+     audio:"Good morning. My name is Doctor. I am a medical student. I would like to ask you a few questions about your health today, if that is okay with you."},
+    {num:"3️⃣",label:"CONFIRM IDENTITY",color:C.lime,
+     en:`"Could I confirm your name please? And your age? Thank you, [Patient Name]."`,
+     bn:`"আপনার নামটা একটু বলবেন? এবং আপনার বয়স? ধন্যবাদ।"`,
+     audio:"Could I confirm your name please? And your age? Thank you."},
+    {num:"4️⃣",label:"CHECK COMFORT",color:C.purple,
+     en:`"Are you comfortable? Please feel free to stop me at any time. Everything you tell me is confidential."`,
+     bn:`"আপনি কি আরামদায়ক আছেন? যেকোনো সময় থামাতে পারেন। আপনি যা বলবেন তা গোপনীয়।"`,
+     audio:"Are you comfortable? Please feel free to stop me at any time. Everything you tell me is confidential."},
+    {num:"5️⃣",label:"OPEN THE CONVERSATION",color:C.amber,
+     en:`"So, what brings you in to see us today?" → Then LISTEN without interrupting for at least 60 seconds.`,
+     bn:`"তো, আজ কী নিয়ে এসেছেন?" → তারপর কমপক্ষে ৬০ সেকেন্ড চুপ করে শুনুন।`,
+     audio:"So, what brings you in to see us today?"},
+  ];
+
   return `
-  <div class="greeting-card">
-    <div class="greeting-header">
+  <div class="card">
+    <div style="background:linear-gradient(135deg,#1A3557,#1E4976);padding:20px 22px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
         <div style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3);border-radius:14px;padding:8px 12px;font-size:26px">👋</div>
         <div>
@@ -322,84 +230,35 @@ function greetingTab(L){
         </div>
       </div>
       <p style="font-size:13px;line-height:1.7;color:rgba(255,255,255,.9)">
-        ${(L==="en"||L==="both")?"Before taking any history, greet your patient warmly. This builds trust and makes them comfortable to share.":""}
+        ${(L==="en"||L==="both")?"Before taking any history, greet your patient warmly. This builds trust and comfort.":""}
         ${L==="both"?" · ":""}
-        ${(L==="bn"||L==="both")?`<span style="opacity:.85">ইতিহাস নেওয়ার আগে রোগীকে উষ্ণভাবে স্বাগত জানান। এটি বিশ্বাস তৈরি করে।</span>`:""}
+        ${(L==="bn"||L==="both")?`<span style="opacity:.85">ইতিহাস নেওয়ার আগে রোগীকে উষ্ণভাবে স্বাগত জানান।</span>`:""}
       </p>
     </div>
-    <div class="step-body">
-
-      <!-- Step 1: Enter room -->
+    <div style="padding:20px">
+      ${steps2.map(st=>`
       <div style="margin-bottom:20px">
-        <div style="font-family:monospace;font-size:10px;color:${C.teal};letter-spacing:3px;margin-bottom:8px;font-weight:bold">1️⃣ ENTERING THE ROOM</div>
-        <div class="greeting-script">
-          ${(L==="en"||L==="both")?`"Knock on the door, enter calmly. Make eye contact and smile. Stand at a comfortable distance — not too close, not too far."`:""}
-          ${(L==="bn"||L==="both")?`<div style="margin-top:6px;color:#5B7A96">"দরজায় টোকা দিন, শান্তভাবে প্রবেশ করুন। চোখে চোখ রাখুন এবং হাসুন।"</div>`:""}
+        <div style="font-family:monospace;font-size:10px;color:${st.color};letter-spacing:3px;margin-bottom:8px;font-weight:bold">${st.num} ${st.label}</div>
+        <div class="greeting-script" style="border-left-color:${st.color}">
+          ${(L==="en"||L==="both")?`<div>${st.en}</div>`:""}
+          ${(L==="bn"||L==="both")?`<div style="margin-top:6px;color:#5B7A96;font-size:13px">${st.bn}</div>`:""}
         </div>
-      </div>
+        <button onclick="speak('${st.audio.replace(/'/g,"\\'")}') " style="margin-top:8px;background:none;border:1.5px solid ${st.color};color:${st.color};border-radius:20px;padding:5px 14px;font-family:monospace;font-size:11px">🔊 Listen</button>
+      </div>`).join("")}
 
-      <!-- Step 2: Introduction -->
-      <div style="margin-bottom:20px">
-        <div style="font-family:monospace;font-size:10px;color:${C.cyan};letter-spacing:3px;margin-bottom:8px;font-weight:bold">2️⃣ INTRODUCE YOURSELF</div>
-        <div class="greeting-script" style="border-left-color:${C.cyan}">
-          ${(L==="en"||L==="both")?`"Good morning/afternoon. My name is [Your Name]. I am a medical student. I would like to ask you a few questions about your health today, if that's okay with you."`:""}
-          ${(L==="bn"||L==="both")?`<div style="margin-top:6px;color:#5B7A96">"আসসালামু আলাইকুম / সুপ্রভাত। আমার নাম [আপনার নাম]। আমি একজন মেডিকেল ছাত্র/ছাত্রী। আপনার স্বাস্থ্য সম্পর্কে কিছু প্রশ্ন করতে চাই, আপনি কি রাজি আছেন?"</div>`:""}
-        </div>
-        <button onclick="speak('Good morning. My name is Doctor. I am a medical student. I would like to ask you a few questions about your health today, if that is okay with you.')" style="margin-top:8px;background:none;border:1.5px solid ${C.cyan};color:${C.cyan};border-radius:20px;padding:5px 14px;font-family:monospace;font-size:11px">🔊 Listen</button>
-      </div>
-
-      <!-- Step 3: Consent -->
-      <div style="margin-bottom:20px">
-        <div style="font-family:monospace;font-size:10px;color:${C.lime};letter-spacing:3px;margin-bottom:8px;font-weight:bold">3️⃣ CONFIRM PATIENT IDENTITY</div>
-        <div class="greeting-script" style="border-left-color:${C.lime}">
-          ${(L==="en"||L==="both")?`"Could I confirm your name please? And your age? Thank you, [Patient Name]."`:""}
-          ${(L==="bn"||L==="both")?`<div style="margin-top:6px;color:#5B7A96">"আপনার নামটা একটু বলবেন? এবং আপনার বয়স? ধন্যবাদ, [রোগীর নাম]।"</div>`:""}
-        </div>
-        <button onclick="speak('Could I confirm your name please? And your age? Thank you.')" style="margin-top:8px;background:none;border:1.5px solid ${C.lime};color:${C.lime};border-radius:20px;padding:5px 14px;font-family:monospace;font-size:11px">🔊 Listen</button>
-      </div>
-
-      <!-- Step 4: Comfort -->
-      <div style="margin-bottom:20px">
-        <div style="font-family:monospace;font-size:10px;color:${C.purple};letter-spacing:3px;margin-bottom:8px;font-weight:bold">4️⃣ CHECK COMFORT</div>
-        <div class="greeting-script" style="border-left-color:${C.purple}">
-          ${(L==="en"||L==="both")?`"Are you comfortable? Please feel free to stop me at any time if you feel tired or need a break. Everything you tell me is confidential."`:""}
-          ${(L==="bn"||L==="both")?`<div style="margin-top:6px;color:#5B7A96">"আপনি কি আরামদায়ক আছেন? যেকোনো সময় থামাতে পারেন। আপনি যা বলবেন তা সম্পূর্ণ গোপনীয় থাকবে।"</div>`:""}
-        </div>
-        <button onclick="speak('Are you comfortable? Please feel free to stop me at any time if you feel tired or need a break. Everything you tell me is confidential.')" style="margin-top:8px;background:none;border:1.5px solid ${C.purple};color:${C.purple};border-radius:20px;padding:5px 14px;font-family:monospace;font-size:11px">🔊 Listen</button>
-      </div>
-
-      <!-- Step 5: Open question -->
-      <div style="margin-bottom:20px">
-        <div style="font-family:monospace;font-size:10px;color:${C.amber};letter-spacing:3px;margin-bottom:8px;font-weight:bold">5️⃣ OPEN THE CONVERSATION</div>
-        <div class="greeting-script" style="border-left-color:${C.amber}">
-          ${(L==="en"||L==="both")?`"So, what brings you in to see us today?" → Then LISTEN without interrupting for at least 60 seconds."`:""}
-          ${(L==="bn"||L==="both")?`<div style="margin-top:6px;color:#5B7A96">"তো, আজ কী নিয়ে এসেছেন?" → তারপর কমপক্ষে ৬০ সেকেন্ড কথা না বলে শুনুন।</div>`:""}
-        </div>
-        <button onclick="speak('So, what brings you in to see us today?')" style="margin-top:8px;background:none;border:1.5px solid ${C.amber};color:${C.amber};border-radius:20px;padding:5px 14px;font-family:monospace;font-size:11px">🔊 Listen</button>
-      </div>
-
-      <!-- Tips -->
-      <div class="greeting-tip">
-        <div style="font-family:monospace;font-size:9px;color:#B7841A;letter-spacing:3px;margin-bottom:8px">💡 BODY LANGUAGE TIPS</div>
+      <div style="background:#FFFBF0;border:1px solid #F5D87A;border-radius:11px;padding:14px 18px;margin-bottom:20px">
+        <div style="font-family:monospace;font-size:9px;color:#B7841A;letter-spacing:3px;margin-bottom:10px">💡 BODY LANGUAGE TIPS</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          ${[
-            ["✅","Maintain eye contact","চোখে চোখ রাখুন"],
-            ["✅","Sit at same level","রোগীর সমান উচ্চতায় বসুন"],
-            ["✅","Nod while listening","শুনতে শুনতে মাথা নাড়ুন"],
-            ["✅","Keep open posture","খোলামেলা শারীরিক ভঙ্গি রাখুন"],
-            ["❌","Don't cross your arms","হাত ক্রস করে রাখবেন না"],
-            ["❌","Don't look at phone","ফোন দেখবেন না"],
-          ].map(([icon,en,bn])=>`
+          ${[["✅","Maintain eye contact","চোখে চোখ রাখুন"],["✅","Sit at same level","রোগীর সমান উচ্চতায় বসুন"],["✅","Nod while listening","শুনতে শুনতে মাথা নাড়ুন"],["✅","Keep open posture","খোলামেলা ভঙ্গি রাখুন"],["❌","Don't cross arms","হাত ক্রস করবেন না"],["❌","Don't look at phone","ফোন দেখবেন না"]].map(([ic,en,bn])=>`
           <div style="background:#fff;border-radius:8px;padding:8px 10px;border:1px solid #F5D87A">
-            <div style="font-size:14px">${icon}</div>
-            ${(L==="en"||L==="both")?`<div style="font-size:11px;color:#5C4A00;margin-top:3px">${en}</div>`:""}
-            ${(L==="bn"||L==="both")?`<div style="font-size:10px;color:#7A6010;margin-top:2px">${bn}</div>`:""}
+            <div style="font-size:14px">${ic}</div>
+            ${(L==="en"||L==="both")?`<div style="font-size:11px;color:#5C4A00;margin-top:2px">${en}</div>`:""}
+            ${(L==="bn"||L==="both")?`<div style="font-size:10px;color:#7A6010;margin-top:1px">${bn}</div>`:""}
           </div>`).join("")}
         </div>
       </div>
 
-      <!-- Next button -->
-      <button onclick="state.tab='guide';state.si=0;render()" style="width:100%;margin-top:20px;padding:14px;background:linear-gradient(135deg,${C.teal},${C.navy});border:none;border-radius:12px;color:#fff;font-weight:bold;font-size:14px;font-family:monospace;box-shadow:0 4px 14px rgba(26,53,87,.25)">
+      <button onclick="state.tab='guide';state.si=0;render()" style="width:100%;padding:14px;background:linear-gradient(135deg,${C.teal},${C.navy});border:none;border-radius:12px;color:#fff;font-weight:bold;font-size:14px;font-family:monospace;box-shadow:0 4px 14px rgba(26,53,87,.25)">
         ✅ Ready! Start Taking History →
       </button>
     </div>
@@ -410,63 +269,59 @@ function greetingTab(L){
 function guideTab(s,L){
   const pct=Math.round(((state.si+1)/STEPS.length)*100);
   return `
-  <div style="margin-bottom:18px">
-    <div class="progress-row"><span>STEP ${state.si+1} / ${STEPS.length}</span><span style="color:${s.color};font-weight:bold">${pct}%</span></div>
-    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:linear-gradient(90deg,${s.color},${s.color}bb)"></div></div>
-  </div>
+  <div style="margin-bottom:5px;display:flex;justify-content:space-between;font-size:10px;font-family:monospace;color:${C.muted}"><span>STEP ${state.si+1} / ${STEPS.length}</span><span style="color:${s.color};font-weight:bold">${pct}%</span></div>
+  <div class="progress-bar"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${s.color},${s.color}bb);border-radius:10px;transition:width .4s"></div></div>
   <div class="pills">
-    ${STEPS.map((x,i)=>`<button class="pill" style="border-color:${i===state.si?x.color:C.border};background:${i===state.si?x.color:"#fff"};color:${i===state.si?"#fff":C.muted}" onclick="state.si=${i};state.mnem=null;render()">${x.code}</button>`).join("")}
+    ${STEPS.map((x,i)=>`<button class="pill" style="border-color:${i===state.si?x.color:C.border};background:${i===state.si?x.color:"#fff"};color:${i===state.si?"#fff":C.muted}" onclick="state.si=${i};state.mnem=null;save();render()">${x.code}</button>`).join("")}
   </div>
-  <div class="step-card">
-    <div class="step-header" style="background:linear-gradient(135deg,${s.color},${s.color}bb)">
-      <div class="step-header-top">
-        <div class="step-icon-box">
-          <div class="step-icon">${s.emoji}</div>
+  <div class="card">
+    <div style="background:linear-gradient(135deg,${s.color},${s.color}bb);padding:20px 22px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3);border-radius:14px;padding:8px 12px;font-size:26px">${s.emoji}</div>
           <div>
-            <div class="step-code">${s.code}</div>
-            <div class="step-title">${s.title}</div>
-            ${(L==="both"||L==="bn")?`<div class="step-title-bn">${s.title_bn}</div>`:""}
+            <div style="font-size:9px;font-family:monospace;color:rgba(255,255,255,.8);letter-spacing:3px;margin-bottom:2px">${s.code}</div>
+            <div style="font-size:18px;font-weight:bold;color:#fff">${s.title}</div>
+            ${(L==="both"||L==="bn")?`<div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:2px">${s.title_bn}</div>`:""}
           </div>
         </div>
-        <button class="pronounce-btn" onclick="speak('${s.audio}')">🔉 PRONOUNCE</button>
+        <button style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.4);color:#fff;border-radius:10px;padding:7px 12px;font-size:11px;font-family:monospace" onclick="speak('${s.audio}')">🔉 PRONOUNCE</button>
       </div>
-      <p class="step-subtitle">${(L==="en"||L==="both")?s.subtitle:""}${L==="both"?" · ":""}${(L==="bn"||L==="both")?s.subtitle_bn:""}</p>
+      <p style="margin:10px 0 0;font-size:13px;line-height:1.7;color:rgba(255,255,255,.9)">${(L==="en"||L==="both")?s.subtitle:""}${L==="both"?" · ":""}${(L==="bn"||L==="both")?s.subtitle_bn:""}</p>
     </div>
-    <div class="step-body">
-      <div class="q-label">🎙 Key Questions</div>
-      <div class="questions">
-        ${s.prompts.map((q,i)=>`
-        <div class="q-item" style="background:${s.light};border-left-color:${s.color}">
-          <span class="q-num" style="background:${s.color}">${i+1}</span>
-          <div style="flex:1">
-            ${(L==="en"||L==="both")?`<div class="q-en">"${q.en}"</div>`:""}
-            ${(L==="bn"||L==="both")?`<div class="q-bn" style="color:${s.color}">"${q.bn}"</div>`:""}
-          </div>
-          <button class="q-speak" onclick="speak('${q.en.replace(/'/g,"\\'")}')">🔊</button>
-        </div>`).join("")}
-      </div>
+    <div style="padding:20px">
+      <div style="font-family:monospace;font-size:9px;color:${C.muted};letter-spacing:3px;margin-bottom:10px">🎙 KEY QUESTIONS</div>
+      ${s.prompts.map((q,i)=>`
+      <div class="q-item" style="background:${s.light};border-left-color:${s.color}">
+        <span class="q-num" style="background:${s.color}">${i+1}</span>
+        <div style="flex:1">
+          ${(L==="en"||L==="both")?`<div style="font-size:13px;font-style:italic;line-height:1.5">"${q.en}"</div>`:""}
+          ${(L==="bn"||L==="both")?`<div style="font-size:12px;color:${s.color};margin-top:2px;line-height:1.5">"${q.bn}"</div>`:""}
+        </div>
+        <button style="background:none;border:none;font-size:14px;opacity:.5" onclick="speak('${q.en.replace(/'/g,"\\'")}')">🔊</button>
+      </div>`).join("")}
       <div class="tip-box">
-        <div class="tip-label">💡 CLINICAL TIP</div>
+        <div style="font-family:monospace;font-size:9px;color:#B7841A;letter-spacing:3px;margin-bottom:5px">💡 CLINICAL TIP</div>
         ${(L==="en"||L==="both")?`<p style="font-size:13px;color:#5C4A00;line-height:1.7;margin:0">${s.tip.en}</p>`:""}
         ${(L==="bn"||L==="both")?`<p style="font-size:12px;color:#7A6010;line-height:1.7;margin:${L==="both"?"5px 0 0":0}">${s.tip.bn}</p>`:""}
       </div>
       ${s.mnemonics.map(m=>`
-      <button class="mnem-btn" style="background:${s.light};border-color:${s.color}44;color:${s.color}" onclick="state.mnem=state.mnem==='${m.name}'?null:'${m.name}';render()">
+      <button style="display:flex;align-items:center;gap:8px;background:${s.light};border:2px solid ${s.color}44;border-radius:11px;padding:10px 16px;width:100%;text-align:left;margin-top:16px;font-family:monospace;font-weight:bold;font-size:12px;color:${s.color}" onclick="state.mnem=state.mnem==='${m.name}'?null:'${m.name}';render()">
         🧠 MNEMONIC: ${m.name} <span style="margin-left:auto">${state.mnem===m.name?"▲ Hide":"▼ Reveal"}</span>
       </button>
-      ${state.mnem===m.name?`<div class="mnem-grid">${m.items.map(it=>`<button class="mnem-item" style="background:${s.light};border-color:${s.color}44" onclick="speak('${it}')"><div style="font-family:monospace;font-size:20px;font-weight:bold;color:${s.color}">${it[0]}</div><div style="font-size:10px;color:#6B8299;margin-top:2px">${it}</div><div style="font-size:9px;color:${s.color};margin-top:3px;opacity:.7">🔊 tap</div></button>`).join("")}</div>`:""}
+      ${state.mnem===m.name?`<div class="mnem-grid">${m.items.map(it=>`<button style="background:${s.light};border:1.5px solid ${s.color}44;border-radius:11px;padding:10px 8px;text-align:center" onclick="speak('${it}')"><div style="font-family:monospace;font-size:20px;font-weight:bold;color:${s.color}">${it[0]}</div><div style="font-size:10px;color:#6B8299;margin-top:2px">${it}</div><div style="font-size:9px;color:${s.color};margin-top:3px;opacity:.7">🔊 tap</div></button>`).join("")}</div>`:""}
       `).join("")}
     </div>
   </div>
-  <div class="nav-row">
-    <button class="nav-back" onclick="state.si=Math.max(0,state.si-1);state.mnem=null;render()" ${state.si===0?"disabled":""} style="color:${state.si===0?C.border:"#1E2D3D"}">← Back</button>
-    <button class="nav-next" onclick="state.si=Math.min(${STEPS.length-1},state.si+1);state.mnem=null;render()" ${state.si===STEPS.length-1?"disabled":""} style="background:${state.si===STEPS.length-1?"#ccc":`linear-gradient(135deg,${s.color},${s.color}bb)`}">Next Step →</button>
+  <div style="display:flex;gap:10px;justify-content:space-between">
+    <button style="padding:10px 20px;border-radius:11px;border:2px solid ${C.border};background:#fff;font-family:monospace;font-weight:bold;font-size:12px;color:${state.si===0?C.border:"#1E2D3D"}" onclick="state.si=Math.max(0,state.si-1);state.mnem=null;save();render()" ${state.si===0?"disabled":""}>← Back</button>
+    <button style="padding:10px 24px;border-radius:11px;border:none;color:#fff;font-family:monospace;font-weight:bold;font-size:12px;background:${state.si===STEPS.length-1?"#ccc":`linear-gradient(135deg,${s.color},${s.color}bb)`}" onclick="state.si=Math.min(${STEPS.length-1},state.si+1);state.mnem=null;save();render()" ${state.si===STEPS.length-1?"disabled":""}>Next Step →</button>
   </div>
-  <div class="flow-map">
-    <div class="flow-label">📍 Full History Flow</div>
+  <div style="background:#fff;border-radius:14px;padding:16px 18px;margin-top:20px;border:1px solid ${C.border}">
+    <div style="font-family:monospace;font-size:9px;color:${C.muted};letter-spacing:3px;margin-bottom:12px">📍 FULL HISTORY FLOW</div>
     <div class="flow-row">
       ${STEPS.map((x,i)=>`
-      <button class="flow-item" style="background:${i===state.si?x.color:"#F7FAFC"};border-color:${i===state.si?x.color:C.border}" onclick="state.si=${i};state.mnem=null;render()">
+      <button class="flow-item" style="background:${i===state.si?x.color:"#F7FAFC"};border-color:${i===state.si?x.color:C.border}" onclick="state.si=${i};state.mnem=null;save();render()">
         <span style="font-size:16px">${x.emoji}</span>
         <span style="font-family:monospace;font-size:9px;font-weight:bold;color:${i===state.si?"#fff":x.color}">${x.code}</span>
       </button>
@@ -481,11 +336,11 @@ function practiceTab(curP,allP){
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
     <div>
       <h2 style="font-family:monospace;color:${C.navy};margin:0;font-size:14px;letter-spacing:2px;text-transform:uppercase">🏋 Practice Mode</h2>
-      <p style="color:${C.muted};font-size:11px;margin:3px 0 0;font-family:monospace">Real ward scenarios — think before you reveal</p>
+      <p style="color:${C.muted};font-size:11px;margin:3px 0 0;font-family:monospace">Think before you reveal!</p>
     </div>
-    <div class="score-box"><div style="font-family:monospace;font-size:10px;color:${C.muted}">SCORE</div><div class="score-val">${state.score.c}/${state.score.t}</div></div>
+    <div class="score-box"><div style="font-family:monospace;font-size:10px;color:${C.muted}">SCORE</div><div style="font-family:monospace;font-size:20px;font-weight:bold;color:${C.lime}">${state.score.c}/${state.score.t}</div></div>
   </div>
-  <div class="step-card" style="border:2px solid ${curP.color}33">
+  <div class="card" style="border:2px solid ${curP.color}33">
     <div style="background:${curP.light};border-bottom:2px solid ${curP.color}22;padding:12px 20px;display:flex;align-items:center;gap:10px">
       <span style="font-size:18px">${curP.emoji}</span>
       <span style="font-family:monospace;font-weight:bold;color:${curP.color};font-size:12px">${curP.code}</span>
@@ -493,7 +348,7 @@ function practiceTab(curP,allP){
     </div>
     <div style="padding:22px">
       <div style="font-family:monospace;font-size:9px;color:${C.muted};letter-spacing:3px;margin-bottom:8px">📋 SCENARIO</div>
-      <p class="scenario-box">${curP.scenario}</p>
+      <p style="font-size:15px;line-height:1.7;background:#F7FAFC;border-radius:11px;padding:14px 18px;border:1px solid ${C.border};margin:0 0 18px">${curP.scenario}</p>
       ${!state.showAns
         ?`<button class="reveal-btn" style="background:linear-gradient(135deg,${curP.color},${curP.color}bb)" onclick="state.showAns=true;render()">💡 Reveal Best Approach</button>`
         :`<div>
@@ -513,81 +368,62 @@ function practiceTab(curP,allP){
       <span style="font-size:14px">${p.emoji}</span>
       <span style="font-family:monospace;font-size:10px;color:${p.color};min-width:32px;font-weight:bold">${p.code}</span>
       <span style="font-size:12px;color:${C.muted};flex:1">${p.scenario}</span>
-      ${i===state.pi%allP.length?`<span style="color:${p.color};font-size:11px">▶</span>`:""}
+      ${i===state.pi%allP.length?`<span style="color:${p.color}">▶</span>`:""}
     </div>`).join("")}
   </div>`;
 }
 
 // ── COMMUNITY TAB ──────────────────────────────────────────
-function communityTab(user){
+function communityTab(u){
   return `
   <h2 style="font-family:monospace;color:${C.navy};margin:0 0 4px;font-size:14px;letter-spacing:2px;text-transform:uppercase">💬 Student Tips</h2>
   <p style="color:${C.muted};font-size:11px;margin-bottom:18px">শিক্ষার্থীদের টিপস শেয়ার করুন · Share your ward tricks</p>
-
-  ${user?`
-  <div class="post-box">
-    <div style="font-family:monospace;font-size:10px;color:${C.muted};letter-spacing:2px;margin-bottom:12px;text-transform:uppercase">✍️ Post Your Idea</div>
+  ${u?`
+  <div style="background:#fff;border-radius:14px;border:1px solid ${C.border};padding:20px;margin-bottom:18px">
+    <div style="font-family:monospace;font-size:10px;color:${C.muted};letter-spacing:2px;margin-bottom:12px">✍️ POST YOUR IDEA</div>
     <select class="sel" onchange="state.newStep=this.value">
       ${STEPS.map(s=>`<option value="${s.code}" ${state.newStep===s.code?"selected":""}>${s.code} — ${s.title}</option>`).join("")}
     </select>
-    <textarea class="ta" rows="2" placeholder="Write your tip..." oninput="state.newText=this.value" style="margin-bottom:8px">${state.newText}</textarea>
-    <textarea class="ta" rows="2" placeholder="(Optional) Bangla translation..." oninput="state.newEn=this.value" style="margin-bottom:12px;color:${C.muted}">${state.newEn}</textarea>
-    <button class="post-btn" onclick="postIdea()">POST →</button>
+    <textarea class="ta" rows="2" placeholder="Write your tip in English or Bangla..." oninput="state.newText=this.value" style="margin-bottom:8px">${state.newText}</textarea>
+    <textarea class="ta" rows="2" placeholder="(Optional) Translation..." oninput="state.newEn=this.value" style="margin-bottom:12px;color:${C.muted}">${state.newEn}</textarea>
+    <button style="padding:9px 22px;background:linear-gradient(135deg,${C.navy},#1E4976);color:#fff;border:none;border-radius:9px;font-family:monospace;font-weight:bold;font-size:12px" onclick="postIdea()">POST →</button>
   </div>`:`
-  <div class="login-required">
+  <div class="login-wall">
     <div style="font-size:30px;margin-bottom:8px">🔐</div>
     <div style="font-weight:bold;color:${C.navy};margin-bottom:4px">Login to post tips & like ideas</div>
-    <div style="font-size:12px;color:${C.muted};margin-bottom:14px">Sign in with your Google account to join the community</div>
-    <button class="google-btn" style="margin:0 auto" onclick="window._googleLogin()">
-      <img src="https://www.google.com/favicon.ico" width="14" height="14"/> Sign in with Google
-    </button>
+    <div style="font-size:12px;color:${C.muted};margin-bottom:14px">Create a free account to join the community</div>
+    <button style="padding:8px 20px;background:linear-gradient(135deg,${C.navy},#1E4976);color:#fff;border:none;border-radius:20px;font-family:monospace;font-weight:bold;font-size:12px" onclick="state.tab='login';render()">🔐 Login / Sign Up</button>
   </div>`}
-
-  <div id="ideas-list">
-    ${state.ideas.length===0?`<div style="text-align:center;padding:30px;color:${C.muted};font-family:monospace;font-size:12px">Loading community tips...</div>`:""}
-    ${state.ideas.map(idea=>{
-      const s=STEPS.find(x=>x.code===idea.step);
-      const isLiked=state.liked.includes(idea.id);
-      return `<div class="idea-card" style="border-left:4px solid ${s?.color||"#999"}">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-          <span style="background:${s?.color};color:#fff;border-radius:5px;padding:2px 10px;font-family:monospace;font-size:10px;font-weight:bold">${idea.step}</span>
-          <span style="font-family:monospace;font-size:11px;color:${C.muted}">by ${idea.author||"Anonymous"}</span>
-        </div>
-        <p style="margin:0 0 5px;font-size:14px;line-height:1.7">${idea.text}</p>
-        ${idea.bn?`<p style="margin:0 0 10px;font-size:12px;line-height:1.6;color:${C.muted};font-style:italic">${idea.bn}</p>`:""}
-        <button class="like-btn" style="background:${isLiked?"#FAEAEE":"#F4F8FC"};border-color:${isLiked?C.rose:C.border};color:${isLiked?C.rose:C.muted}" onclick="toggleLike('${idea.id}',${isLiked},${user?"true":"false"})">
-          ${isLiked?"❤️":"🤍"} ${idea.likes||0}
-        </button>
-      </div>`;
-    }).join("")}
-  </div>`;
+  ${state.ideas.map(idea=>{
+    const s=STEPS.find(x=>x.code===idea.step);
+    const isLiked=state.liked.includes(idea.id);
+    return `<div class="idea-card" style="border-left:4px solid ${s?.color||"#999"}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <span style="background:${s?.color};color:#fff;border-radius:5px;padding:2px 10px;font-family:monospace;font-size:10px;font-weight:bold">${idea.step}</span>
+        <span style="font-family:monospace;font-size:11px;color:${C.muted}">by ${idea.author}</span>
+      </div>
+      <p style="margin:0 0 5px;font-size:14px;line-height:1.7">${idea.text}</p>
+      ${idea.bn?`<p style="margin:0 0 10px;font-size:12px;line-height:1.6;color:${C.muted};font-style:italic">${idea.bn}</p>`:""}
+      <button style="display:flex;align-items:center;gap:5px;border-radius:18px;padding:4px 12px;font-size:12px;font-family:monospace;border:1px solid;background:${isLiked?"#FAEAEE":"#F4F8FC"};border-color:${isLiked?C.rose:C.border};color:${isLiked?C.rose:C.muted}" onclick="toggleLike(${idea.id},${isLiked},${u?"true":"false"})">
+        ${isLiked?"❤️":"🤍"} ${idea.likes}
+      </button>
+    </div>`;
+  }).join("")}`;
 }
 
 // ── NOTEPAD TAB ────────────────────────────────────────────
-function notepadTab(user){
+function notepadTab(u){
   return `
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
     <div>
       <h2 style="font-family:monospace;color:${C.navy};margin:0;font-size:14px;letter-spacing:2px;text-transform:uppercase">📝 Patient Notepad</h2>
-      <p style="color:${C.muted};font-size:11px;margin:3px 0 0;font-family:monospace">${user?"Notes saved to your account ✅":"Login to save across sessions · রোগীর নোট"}</p>
+      <p style="color:${C.muted};font-size:11px;margin:3px 0 0;font-family:monospace">${u?"Notes saved to your account ✅":"Notes saved on this device"}</p>
     </div>
-    <button class="copy-btn" style="background:${state.copied?C.lime:C.navy}" onclick="copyNotes()">
-      ${state.copied?"✓ Copied!":"⬆ Copy All"}
-    </button>
+    <button style="padding:8px 18px;background:${state.copied?C.lime:C.navy};color:#fff;border:none;border-radius:9px;font-family:monospace;font-size:11px;font-weight:bold;transition:background .3s" onclick="copyNotes()">${state.copied?"✓ Copied!":"⬆ Copy All"}</button>
   </div>
-  ${!user?`<div class="save-banner">
-    <span style="font-size:18px">🔐</span>
-    <div style="flex:1">
-      <div style="color:#B7841A;font-family:monospace;font-size:11px;font-weight:bold">Login to save notes permanently</div>
-      <div style="color:${C.muted};font-size:11px;margin-top:2px">Notes sync across all your devices</div>
-    </div>
-    <button class="google-btn" style="font-size:10px;padding:5px 10px" onclick="window._googleLogin()">
-      <img src="https://www.google.com/favicon.ico" width="12" height="12"/> Login
-    </button>
-  </div>`:""}
   ${STEPS.map(s=>`
   <div class="note-card">
-    <div class="note-header" style="background:linear-gradient(135deg,${s.color},${s.color}bb)">
+    <div style="background:linear-gradient(135deg,${s.color},${s.color}bb);padding:9px 16px;display:flex;align-items:center;gap:7px">
       <span style="font-size:14px">${s.emoji}</span>
       <div>
         <span style="font-family:monospace;font-weight:bold;font-size:12px;color:#fff">${s.code} — ${s.title}</span>
@@ -596,6 +432,29 @@ function notepadTab(user){
     </div>
     <textarea rows="3" style="width:100%;padding:12px 16px;border:none;font-family:Georgia,serif;font-size:13px;line-height:1.7;resize:vertical;box-sizing:border-box;color:#1E2D3D;background:#F7FAFC" placeholder="Notes for ${s.title}..." oninput="saveNote('${s.id}',this.value)">${state.notes[s.id]||""}</textarea>
   </div>`).join("")}`;
+}
+
+// ── LOGIN TAB ──────────────────────────────────────────────
+function loginTab(){
+  return `<div class="login-center">
+  <div class="login-card">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:36px;margin-bottom:7px">🔐</div>
+      <div style="font-size:18px;font-weight:bold;font-family:monospace;color:${C.navy}">${state.lv==="login"?"Welcome Back":"Create Account"}</div>
+      <div style="font-size:11px;color:${C.muted};margin-top:3px">Login stays even after closing the app ✅</div>
+    </div>
+    ${state.ferr?`<div style="background:#FEE8ED;border:1px solid #F8B4C2;color:${C.rose};border-radius:7px;padding:7px 12px;font-size:11px;margin-bottom:12px;text-align:center">${state.ferr}</div>`:""}
+    ${state.lv==="signup"?`<input class="inp" type="text" placeholder="Your full name" value="${state.fname}" oninput="state.fname=this.value"/>`:""}
+    <input class="inp" type="email" placeholder="Email address" value="${state.femail}" oninput="state.femail=this.value"/>
+    <input class="inp" type="password" placeholder="Password (min 6 characters)" style="margin-bottom:20px" value="${state.fpass}" oninput="state.fpass=this.value"/>
+    <button class="submit-btn" onclick="doLogin()">${state.lv==="login"?"🔐 Login":"🚀 Create Account"}</button>
+    <div style="text-align:center;margin-top:14px;font-size:12px;color:${C.muted}">
+      ${state.lv==="login"?"Don't have an account? ":"Already have an account? "}
+      <button style="background:none;border:none;color:${C.teal};cursor:pointer;font-size:12px;font-family:monospace;text-decoration:underline" onclick="state.lv=state.lv==='login'?'signup':'login';state.ferr='';render()">
+        ${state.lv==="login"?"Sign Up Free":"Login"}
+      </button>
+    </div>
+  </div></div>`;
 }
 
 // ── PRINT MODAL ────────────────────────────────────────────
@@ -616,14 +475,11 @@ function printModal(){
         <div style="border:2px solid ${s.color};border-radius:9px;overflow:hidden">
           <div style="background:${s.color};padding:7px 11px;display:flex;gap:7px;align-items:center">
             <span style="font-size:13px">${s.emoji}</span>
-            <div>
-              <div style="color:#fff;font-weight:bold;font-size:11px">${s.code} — ${s.title}</div>
-              <div style="color:rgba(255,255,255,.85);font-size:8px">${s.title_bn}</div>
-            </div>
+            <div><div style="color:#fff;font-weight:bold;font-size:11px">${s.code} — ${s.title}</div><div style="color:rgba(255,255,255,.85);font-size:8px">${s.title_bn}</div></div>
           </div>
           <div style="padding:9px 11px;background:#fafafa">
             ${s.prompts.slice(0,3).map(p=>`<div style="border-left:3px solid ${s.color};padding-left:6px;margin-bottom:4px"><div style="font-size:9px;color:#222;line-height:1.4">${p.en}</div><div style="font-size:8px;color:#777">${p.bn}</div></div>`).join("")}
-            ${s.mnemonics.map(m=>`<div style="margin-top:6px;background:${s.color}18;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:bold;color:${s.color};margin-bottom:2px">🧠 ${m.name}</div><div style="display:flex;flex-wrap:wrap;gap:2px">${m.items.map(it=>`<span style="background:${s.color};color:#fff;border-radius:3px;padding:1px 5px;font-size:7px"><b>${it[0]}</b>${it.slice(1)}</span>`).join("")}</div></div>`).join("")}
+            ${s.mnemonics.map(m=>`<div style="margin-top:5px;background:${s.color}18;border-radius:5px;padding:4px 8px"><div style="font-size:8px;font-weight:bold;color:${s.color};margin-bottom:2px">🧠 ${m.name}</div><div style="display:flex;flex-wrap:wrap;gap:2px">${m.items.map(it=>`<span style="background:${s.color};color:#fff;border-radius:3px;padding:1px 5px;font-size:7px"><b>${it[0]}</b>${it.slice(1)}</span>`).join("")}</div></div>`).join("")}
             <div style="margin-top:5px;font-size:8px;color:#555;font-style:italic;border-top:1px dashed #e0e0e0;padding-top:4px">💡 ${s.tip.en}</div>
           </div>
         </div>`).join("")}
@@ -637,79 +493,53 @@ function printModal(){
 }
 
 // ── ACTIONS ────────────────────────────────────────────────
-async function toggleLike(id, isLiked, isLoggedIn){
-  if(!isLoggedIn){showToast("🔐 Please login to like ideas!");return;}
+function toggleLike(id,isLiked,isLoggedIn){
+  if(!isLoggedIn){toast("🔐 Please login to like ideas!");return;}
   if(isLiked){
     state.liked=state.liked.filter(x=>x!==id);
-    state.ideas=state.ideas.map(i=>i.id===id?{...i,likes:(i.likes||1)-1}:i);
-    if(window._unlikeIdea) await window._unlikeIdea(id);
+    state.ideas=state.ideas.map(i=>i.id===id?{...i,likes:i.likes-1}:i);
   }else{
     state.liked=[...state.liked,id];
-    state.ideas=state.ideas.map(i=>i.id===id?{...i,likes:(i.likes||0)+1}:i);
-    if(window._likeIdea) await window._likeIdea(id);
+    state.ideas=state.ideas.map(i=>i.id===id?{...i,likes:i.likes+1}:i);
   }
-  localStorage.setItem("liked",JSON.stringify(state.liked));
-  render();
+  save();render();
 }
 
-async function postIdea(){
-  if(!window._user){showToast("🔐 Please login to post!");return;}
+function postIdea(){
+  if(!state.user){toast("🔐 Please login to post!");return;}
   if(!state.newText.trim())return;
-  const idea={
-    author:window._user.name,
-    step:state.newStep,
-    text:state.newText,
-    bn:state.newEn,
-    likes:0,
-    createdAt:Date.now()
-  };
-  if(window._postIdea) await window._postIdea(idea);
+  const idea={id:Date.now(),author:state.user.name,step:state.newStep,text:state.newText,bn:state.newEn,likes:0};
+  state.ideas=[idea,...state.ideas];
   state.newText="";state.newEn="";
-  await loadIdeas();
-  showToast("✅ Posted!");
+  save();toast("✅ Posted!");
 }
 
-async function loadIdeas(){
-  if(window._loadIdeas){
-    try{
-      const ideas=await window._loadIdeas();
-      state.ideas=ideas.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    }catch(e){
-      // Use default ideas if Firestore not set up
-      if(state.ideas.length===0){
-        state.ideas=[
-          {id:"1",author:"Rafiq - DMCH",step:"HPC",text:"Ask patient to point on a body diagram — faster than verbal description.",bn:"রোগীকে শরীরের ছবিতে আঙুল দিয়ে ব্যথার জায়গা দেখাতে বলুন।",likes:18},
-          {id:"2",author:"Priya - Chittagong",step:"SH",text:"Ask 'How much per week?' not 'Do you drink a lot?' — more honest answers.",bn:"'সপ্তাহে কতটা?' জিজ্ঞেস করুন।",likes:25},
-          {id:"3",author:"Lin - BIRDEM",step:"PMH",text:"Start PMH with 'Apart from this, how is your general health?'",bn:"'এই সমস্যা বাদে স্বাস্থ্য কেমন?' দিয়ে শুরু করুন।",likes:12}
-        ];
-      }
-    }
-  }
-  render();
-}
-
-function saveNote(id, val){
+function saveNote(id,val){
   state.notes[id]=val;
-  localStorage.setItem("notes",JSON.stringify(state.notes));
-  if(window._saveNotes) window._saveNotes(state.notes);
+  save();
 }
 
 function copyNotes(){
   const txt=STEPS.map(s=>"## "+s.title+"\n"+(state.notes[s.id]||"(empty)")).join("\n\n");
   navigator.clipboard.writeText(txt).catch(()=>{});
   state.copied=true;render();
-  showToast("📋 Notes copied!");
+  toast("📋 Notes copied!");
   setTimeout(()=>{state.copied=false;render();},2200);
 }
 
-// ── INIT ───────────────────────────────────────────────────
-window._render=render;
-// Load saved notes from localStorage first
-const savedNotes=localStorage.getItem("notes");
-if(savedNotes) state.notes=JSON.parse(savedNotes);
-render();
-loadIdeas();
+function doLogin(){
+  if(!state.femail||!state.fpass){state.ferr="Please fill all fields.";render();return;}
+  if(state.fpass.length<6){state.ferr="Password must be at least 6 characters.";render();return;}
+  if(state.lv==="signup"&&!state.fname.trim()){state.ferr="Please enter your name.";render();return;}
+  const name=state.lv==="signup"?state.fname:state.femail.split("@")[0];
+  state.user={name,email:state.femail};
+  state.ferr="";state.tab="guide";
+  save();
+  toast("👋 Welcome, "+name+"! Login saved ✅");
+}
 
+// ── INIT ───────────────────────────────────────────────────
+render();
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
