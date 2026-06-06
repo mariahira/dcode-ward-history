@@ -64,7 +64,7 @@ const C={navy:"#1A3557",teal:"#2E8B8B",cyan:"#3AAFCF",lime:"#4CAF7D",amber:"#F5A
 
 const STEPS=[
   {id:"pc",code:"PC",emoji:"🩺",color:C.teal,light:"#E8F6F6",title:"Presenting Complaint",title_bn:"প্রধান অভিযোগ",subtitle:"Chief reason — in the patient's own words",subtitle_bn:"রোগীর নিজের ভাষায় আসার কারণ",audio:"Presenting Complaint",
-   prompts:[{en:"What brings you in today?",bn:"আজ কী সমস্যা নিয়ে এসেছেন?"},{en:"What is the main problem you are experiencing?",bn:"আপনার প্রধান সমস্যাটি কী?"},{en:"How long have you had this problem?",bn:"কতদিন ধরে এই সমস্যা?"}],
+   prompts:[{en:"What brings you to the hospital today?",bn:"আজ আপনি কোন সমস্যার জন্য হাসপাতালে এসেছেন?"},{en:"What is your main complaint?",bn:"আপনার প্রধান উপসর্গটি কী?"},{en:"How long have you been experiencing this problem?",bn:"এই সমস্যাটি কতদিন ধরে বিদ্যমান?"}],
    tip:{en:"Use open-ended questions. Let the patient speak first.",bn:"উন্মুক্ত প্রশ্ন করুন। রোগীকে প্রথমে কথা বলতে দিন।"},mnemonics:[],
    practice:[{scenario:"A 45-year-old man walks in holding his chest.",answer:"Start with 'What brings you in today?' — let him describe in his own words first."},{scenario:"An elderly woman says 'I don't feel well.'",answer:"Ask 'Can you tell me more?' — avoid yes/no questions at this stage."}]},
   {id:"hpc",code:"HPC",emoji:"🔬",color:C.cyan,light:"#EAF6FB",title:"History of Presenting Complaint",title_bn:"বর্তমান অভিযোগের ইতিহাস",subtitle:"Deep-dive using SOCRATES framework",subtitle_bn:"SOCRATES পদ্ধতিতে বিশ্লেষণ",audio:"History of Presenting Complaint",
@@ -73,8 +73,8 @@ const STEPS=[
    mnemonics:[{name:"SOCRATES",items:["Site","Onset","Character","Radiation","Associations","Time course","Exacerbating/Relieving","Severity"]}],
    practice:[{scenario:"Patient says: 'I have chest pain.'",answer:"Use SOCRATES — Site? Onset? Character? Radiation to arm/jaw? What makes it worse?"},{scenario:"Patient says: 'I have a headache.'",answer:"How long? Where? Throbbing? Light sensitivity? Nausea? Neck stiffness?"}]},
   {id:"pmh",code:"PMH",emoji:"📋",color:C.lime,light:"#EAF6EF",title:"Past Medical History",title_bn:"পূর্ববর্তী চিকিৎসা ইতিহাস",subtitle:"Previous illnesses, surgeries, hospitalizations",subtitle_bn:"আগের রোগ, অপারেশন ও হাসপাতাল ভর্তি",audio:"Past Medical History",
-   prompts:[{en:"Any known medical conditions?",bn:"পরিচিত কোনো রোগ আছে?"},{en:"Ever been admitted to hospital?",bn:"কখনো হাসপাতালে ভর্তি হয়েছেন?"},{en:"Any previous operations?",bn:"কোনো অপারেশন হয়েছে?"}],
-   tip:{en:"Ask specifically about DM, HTN, TB, Asthma — patients forget chronic conditions.",bn:"ডায়াবেটিস, উচ্চ রক্তচাপ, যক্ষ্মা সরাসরি জিজ্ঞেস করুন।"},
+   prompts:[{en:"Any known medical conditions?",bn:"আপনার পূর্ব থেকে কোনো রোগ বা চিকিৎসাজনিত সমস্যা আছে কি?"},{en:"Ever been admitted to hospital?",bn:"আপনি কি আগে কখনো হাসপাতালে ভর্তি হয়েছেন?"},{en:"Any previous operations?",bn:"আপনার কি আগে কোনো অস্ত্রোপচার হয়েছে?"}],
+   tip:{en:"Ask systematically about chronic diseases such as DM, HTN, TB, thyroid disorders and asthma.",bn:"ডায়াবেটিস, উচ্চ রক্তচাপ, টিবি, থাইরয়েড রোগ ও অ্যাজমার মতো দীর্ঘমেয়াদী রোগসমূহ সম্পর্কে সুনির্দিষ্টভাবে জিজ্ঞেস করুন।"},
    mnemonics:[{name:"MJ THREADS",items:["MI","Jaundice","TB","HTN","Rheumatic fever","Epilepsy","Asthma","Diabetes","Stroke"]}],
    practice:[{scenario:"Patient denies any past illnesses.",answer:"Probe: 'Any blood pressure? Diabetes? TB or jaundice?' Direct questions unlock forgotten history."}]},
   {id:"dh",code:"DH",emoji:"💊",color:C.purple,light:"#F0EEF9",title:"Drug History & Allergies",title_bn:"ওষুধের ইতিহাস ও অ্যালার্জি",subtitle:"Medications, OTC drugs, supplements & allergies",subtitle_bn:"ওষুধ, ভিটামিন, সাপ্লিমেন্ট এবং অ্যালার্জি",audio:"Drug History and Allergies",
@@ -82,7 +82,7 @@ const STEPS=[
    tip:{en:"Distinguish true allergy from side effect. Note dose and compliance.",bn:"অ্যালার্জি ও পার্শ্বপ্রতিক্রিয়ার পার্থক্য করুন।"},mnemonics:[],
    practice:[{scenario:"Patient says 'I'm allergic to penicillin.'",answer:"Ask 'What exactly happens?' Distinguish rash/anaphylaxis (true allergy) from GI upset (intolerance)."}]},
   {id:"fh",code:"FH",emoji:"👪",color:C.amber,light:"#FEF6E4",title:"Family History",title_bn:"পারিবারিক ইতিহাস",subtitle:"Hereditary conditions in close relatives",subtitle_bn:"নিকটাত্মীয়দের বংশগত রোগের ইতিহাস",audio:"Family History",
-   prompts:[{en:"Any conditions run in your family?",bn:"পরিবারে কোনো রোগ আছে?"},{en:"Are your parents alive? Cause of death?",bn:"বাবা-মা বেঁচে আছেন? মৃত্যুর কারণ?"},{en:"Family history of DM, heart disease, cancer?",bn:"পরিবারে ডায়াবেটিস, হৃদরোগ, ক্যান্সার?"}],
+   prompts:[{en:"Any significant illness in your family?",bn:"পরিবারের মধ্যে কোনো দীর্ঘমেয়াদী রোগ আছে কি?"},{en:"Are your parents alive? If deceased, what was the cause?",bn:"আপনার বাবা-মা কি জীবিত? যদি না থাকেন, মৃত্যুর কারণ কী ছিল?"},{en:"Any family history of diabetes, hypertension, thyroid disease, heart disease or malignancy?",bn:"পরিবারে ডায়াবেটিস, উচ্চ রক্তচাপ, থাইরয়েড রোগ, হৃদরোগ বা ক্যান্সারের ইতিহাস আছে কি?"}],
    tip:{en:"Focus on first-degree relatives: parents, siblings, children.",bn:"প্রথম-স্তরের আত্মীয়: বাবা-মা, ভাই-বোন, সন্তান।"},mnemonics:[],
    practice:[{scenario:"Young patient with chest pain, father died at 50.",answer:"Explore family cardiac history — premature CAD is hereditary. Ask about cholesterol, sudden deaths."}]},
   {id:"sh",code:"SH",emoji:"🏙",color:C.orange,light:"#FDF0E8",title:"Social History",title_bn:"সামাজিক ইতিহাস",subtitle:"Occupation, lifestyle, habits & support system",subtitle_bn:"পেশা, জীবনযাত্রা, অভ্যাস ও সামাজিক সহায়তা",audio:"Social History",
@@ -172,7 +172,7 @@ function render(){
         </div>
       </div>
       <div class="tabs">
-        ${[["greeting","👋 Greeting"],["guide","📖 Guide"],["practice","🏋 Practice"],["community","💬 Community"],["notepad","📝 Notepad"]].map(([t,l])=>`<button class="tab-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">${l}</button>`).join("")}
+        ${[["greeting","👋 Greeting & PP"],["guide","📖 Guide"],["practice","🏋 Practice"],["community","💬 Community"],["notepad","📝 Notepad"]].map(([t,l])=>`<button class="tab-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">${l}</button>`).join("")}
       </div>
     </div>
   </header>
@@ -204,18 +204,10 @@ function greetingTab(L){
      en:`"Good morning. My name is [Your Name]. I am a medical student. I would like to ask you a few questions about your health today, if that's okay with you."`,
      bn:`"আসসালামু আলাইকুম। আমার নাম [আপনার নাম]। আমি একজন মেডিকেল ছাত্র/ছাত্রী। আপনার স্বাস্থ্য সম্পর্কে কিছু প্রশ্ন করতে চাই, আপনি কি রাজি?"`,
      audio:"Good morning. My name is Doctor. I am a medical student. I would like to ask you a few questions about your health today, if that is okay with you."},
-    {num:"3️⃣",label:"CONFIRM IDENTITY",color:C.lime,
-     en:`"Could I confirm your name please? And your age? Thank you, [Patient Name]."`,
-     bn:`"আপনার নামটা একটু বলবেন? এবং আপনার বয়স? ধন্যবাদ।"`,
-     audio:"Could I confirm your name please? And your age? Thank you."},
-    {num:"4️⃣",label:"CHECK COMFORT",color:C.purple,
-     en:`"Are you comfortable? Please feel free to stop me at any time. Everything you tell me is confidential."`,
-     bn:`"আপনি কি আরামদায়ক আছেন? যেকোনো সময় থামাতে পারেন। আপনি যা বলবেন তা গোপনীয়।"`,
-     audio:"Are you comfortable? Please feel free to stop me at any time. Everything you tell me is confidential."},
-    {num:"5️⃣",label:"OPEN THE CONVERSATION",color:C.amber,
-     en:`"So, what brings you in to see us today?" → Then LISTEN without interrupting for at least 60 seconds.`,
-     bn:`"তো, আজ কী নিয়ে এসেছেন?" → তারপর কমপক্ষে ৬০ সেকেন্ড চুপ করে শুনুন।`,
-     audio:"So, what brings you in to see us today?"},
+    {num:"3️⃣",label:"PARTICULARS OF PATIENT",color:C.lime,
+     en:`Collect the following patient details systematically:\n• Name · Age · Sex · Marital Status · Religion · Occupation · Address · Date of Admission · Date of Examination`,
+     bn:`নিচের তথ্যগুলো সুশৃঙ্খলভাবে সংগ্রহ করুন:\n• নাম · বয়স · লিঙ্গ · বৈবাহিক অবস্থা · ধর্ম · পেশা · ঠিকানা · ভর্তির তারিখ · পরীক্ষার তারিখ`,
+     audio:"Collect patient particulars including name, age, sex, marital status, religion, occupation, address, date of admission and date of examination."},
   ];
 
   return `
@@ -243,6 +235,22 @@ function greetingTab(L){
           ${(L==="en"||L==="both")?`<div>${st.en}</div>`:""}
           ${(L==="bn"||L==="both")?`<div style="margin-top:6px;color:#5B7A96;font-size:13px">${st.bn}</div>`:""}
         </div>
+        ${st.label==="PARTICULARS OF PATIENT"?`
+        <div style="background:#fff;border:2px solid ${C.lime};border-radius:12px;padding:16px;margin-top:10px">
+          <div style="font-family:monospace;font-size:10px;color:${C.lime};letter-spacing:2px;margin-bottom:12px;font-weight:bold">📋 PATIENT PARTICULARS FORM</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            ${[
+              ["Name","নাম"],["Age","বয়স"],["Sex","লিঙ্গ"],["Marital Status","বৈবাহিক অবস্থা"],
+              ["Religion","ধর্ম"],["Occupation","পেশা"],["Address","ঠিকানা"],["Date of Admission","ভর্তির তারিখ"],
+              ["Date of Examination","পরীক্ষার তারিখ"],["Ward/Bed No.","ওয়ার্ড/বেড নং"]
+            ].map(([en,bn])=>`
+            <div style="background:#F0F4F8;border-radius:8px;padding:8px 10px;border-left:3px solid ${C.lime}">
+              <div style="font-size:10px;font-weight:bold;color:#1A3557">${en}</div>
+              ${(L==="both"||L==="bn")?`<div style="font-size:9px;color:#6B8299">${bn}</div>`:""}
+              <div style="margin-top:4px;height:1px;background:#DCE8F0"></div>
+            </div>`).join("")}
+          </div>
+        </div>`:``}
         <button onclick="speak('${st.audio.replace(/'/g,"\\'")}') " style="margin-top:8px;background:none;border:1.5px solid ${st.color};color:${st.color};border-radius:20px;padding:5px 14px;font-family:monospace;font-size:11px">🔊 Listen</button>
       </div>`).join("")}
 
