@@ -3,19 +3,77 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+
+<!-- ✅ Basic SEO -->
+<title>Dcode Ward History | Medical History Taking Guide for Students</title>
+<meta name="description" content="Step-by-step patient history taking guide for medical students. Bilingual English & Bangla support. Includes SOCRATES, mnemonics, practice scenarios & ward tips. Free PWA app.">
+<meta name="keywords" content="ward history taking, medical student app, SOCRATES history, patient history Bangladesh, মেডিকেল ছাত্র, ward history Bangla, clinical history app, MJ THREADS mnemonic, medical history guide BD">
+<meta name="author" content="Maria Sultana Hira">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://dcode-ward-history.vercel.app/">
+
+<!-- ✅ Open Graph (Facebook, WhatsApp) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dcode-ward-history.vercel.app/">
+<meta property="og:title" content="Dcode Ward History | Free Medical History Taking App">
+<meta property="og:description" content="Learn patient history taking step by step. Bilingual EN/Bangla, SOCRATES mnemonics, practice scenarios & printable cheat sheet. Made for BD medical students.">
+<meta property="og:image" content="https://dcode-ward-history.vercel.app/icon-512.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="bn_BD">
+<meta property="og:site_name" content="Dcode Ward History">
+
+<!-- ✅ Twitter / X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dcode Ward History | Free Medical History App">
+<meta name="twitter:description" content="Step-by-step patient history guide. Bilingual EN/Bangla. SOCRATES, mnemonics, practice scenarios. Free for medical students.">
+<meta name="twitter:image" content="https://dcode-ward-history.vercel.app/icon-512.png">
+
+<!-- ✅ PWA & Mobile -->
 <meta name="theme-color" content="#1A3557"/>
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Dcode Ward"/>
+
+<!-- ✅ Language -->
+<meta http-equiv="content-language" content="en, bn">
+
+<!-- ✅ Google Fonts — Inter + Noto Sans Bengali -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ✅ Structured Data for Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Dcode Ward History",
+  "url": "https://dcode-ward-history.vercel.app/",
+  "description": "Step-by-step bilingual patient history taking guide for medical students in Bangladesh.",
+  "applicationCategory": "EducationApplication",
+  "operatingSystem": "Any",
+  "inLanguage": ["en", "bn"],
+  "author": {
+    "@type": "Person",
+    "name": "Maria Sultana Hira"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="icon-180.png"/>
-<title>Dcode Ward History</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Georgia,serif;background:#F0F4F8;color:#1E2D3D;}
-button{cursor:pointer;}
+body{font-family:'Inter','Noto Sans Bengali',sans-serif;background:#F0F4F8;color:#1E2D3D;font-weight:500;}
+button{cursor:pointer;font-family:'Inter','Noto Sans Bengali',sans-serif;}
 button:active{transform:scale(0.97);}
-textarea,input,select{font-family:Georgia,serif;}
+textarea,input,select{font-family:'Inter','Noto Sans Bengali',sans-serif;font-weight:500;}
 textarea:focus,input:focus,select:focus{outline:2px solid #2E8B8B;}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:#DCE8F0;border-radius:10px;}
@@ -36,7 +94,7 @@ textarea:focus,input:focus,select:focus{outline:2px solid #2E8B8B;}
 .mnem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px;}
 .flow-row{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:12px;}
 .flow-item{display:flex;flex-direction:column;align-items:center;gap:3px;border:2px solid;border-radius:11px;padding:8px 10px;min-width:52px;}
-.greeting-script{background:#F7FAFC;border-left:4px solid #2E8B8B;border-radius:0 11px 11px 0;padding:14px 18px;margin:10px 0;font-style:italic;line-height:1.8;font-size:14px;}
+.greeting-script{background:#F7FAFC;border-left:4px solid #2E8B8B;border-radius:0 11px 11px 0;padding:14px 18px;margin:10px 0;font-weight:600;line-height:1.8;font-size:14px;font-family:'Inter','Noto Sans Bengali',sans-serif;}
 .inp{width:100%;padding:10px 13px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;margin-bottom:11px;box-sizing:border-box;}
 .sel{width:100%;padding:9px 12px;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:12px;font-family:monospace;margin-bottom:10px;box-sizing:border-box;}
 .ta{width:100%;background:#F0F4F8;border:1.5px solid #DCE8F0;border-radius:9px;color:#1E2D3D;font-size:13px;resize:vertical;box-sizing:border-box;padding:10px 12px;}
@@ -303,8 +361,8 @@ function guideTab(s,L){
       <div class="q-item" style="background:${s.light};border-left-color:${s.color}">
         <span class="q-num" style="background:${s.color}">${i+1}</span>
         <div style="flex:1">
-          ${(L==="en"||L==="both")?`<div style="font-size:13px;font-style:italic;line-height:1.5">"${q.en}"</div>`:""}
-          ${(L==="bn"||L==="both")?`<div style="font-size:12px;color:${s.color};margin-top:2px;line-height:1.5">"${q.bn}"</div>`:""}
+          ${(L==="en"||L==="both")?`<div style="font-size:13px;font-weight:600;line-height:1.5">"${q.en}"</div>`:""}
+          ${(L==="bn"||L==="both")?`<div style="font-size:12px;color:${s.color};margin-top:2px;line-height:1.5;font-weight:600">"${q.bn}"</div>`:""}
         </div>
         <button style="background:none;border:none;font-size:14px;opacity:.5" onclick="speak('${q.en.replace(/'/g,"\\'")}')">🔊</button>
       </div>`).join("")}
