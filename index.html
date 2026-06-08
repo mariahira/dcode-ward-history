@@ -77,11 +77,19 @@ textarea,input,select{font-family:'Inter','Noto Sans Bengali',sans-serif;font-we
 textarea:focus,input:focus,select:focus{outline:2px solid #2E8B8B;}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:#DCE8F0;border-radius:10px;}
-.header{background:linear-gradient(135deg,#1A3557,#1E4976);padding:14px 16px 10px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(26,53,87,.3);}
-.tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
-.tab-btn{padding:5px 14px;border-radius:20px;border:none;font-size:11px;font-family:monospace;transition:all .2s;}
-.tab-btn.active{background:#fff;color:#1A3557;font-weight:bold;}
-.tab-btn:not(.active){background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+.header{background:#1A3255;padding:20px 16px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(15,28,50,.35);}
+.nav-grid-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;}
+.nav-grid-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:12px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:rgba(255,255,255,.75);font-size:13px;font-weight:500;text-align:left;width:100%;transition:all .15s;}
+.nav-btn.active{background:rgba(255,255,255,.95);border-color:transparent;color:#1A3255;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.15);}
+.nav-btn .nav-arrow{opacity:.35;font-size:14px;margin-left:auto;flex-shrink:0;}
+.nav-btn.active .nav-arrow{opacity:.5;}
+.lang-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.lang-group{display:flex;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:3px;gap:2px;}
+.lang-opt{padding:5px 13px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.2px;}
+.lang-opt.active{background:#fff;color:#1A3255;}
+.lang-opt:not(.active){background:transparent;color:rgba(255,255,255,.65);}
+.print-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.75);border-radius:24px;font-size:12px;font-weight:600;}
 .main{max-width:900px;margin:0 auto;padding:20px 14px 50px;}
 .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1A3557;color:#fff;border:1px solid #2E8B8B;padding:9px 22px;border-radius:28px;z-index:3000;font-family:monospace;font-size:12px;box-shadow:0 5px 20px rgba(0,0,0,.15);white-space:nowrap;}
 .card{background:#fff;border-radius:18px;box-shadow:0 6px 24px rgba(26,53,87,.1);overflow:hidden;margin-bottom:16px;border:1px solid #DCE8F0;}
@@ -206,32 +214,57 @@ function render(){
 
   <header class="header">
     <div style="max-width:900px;margin:0 auto">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:12px;padding:7px 11px;font-size:22px">⚕</div>
+
+      <!-- Brand Row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:14px">
+          <!-- Icon -->
+          <div style="width:52px;height:52px;background:#162840;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1px solid rgba(255,255,255,.08)">⚕️</div>
+          <!-- Text -->
           <div>
-            <div style="font-size:17px;font-weight:bold;font-family:monospace;color:#fff">Dcode Ward History</div>
-            <div style="font-size:9px;color:rgba(255,255,255,.6);font-family:monospace">ডিকোড ওয়ার্ড হিস্ট্রি · BD & International</div>
+            <div style="font-size:20px;font-weight:700;color:#F0F6FF;letter-spacing:-.4px;line-height:1.15">Dcode Ward History</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;font-weight:400;letter-spacing:.1px">ডিকোড ওয়ার্ড হিস্ট্রি &nbsp;·&nbsp; BD & International</div>
           </div>
         </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          <div style="display:flex;background:rgba(255,255,255,.1);border-radius:20px;padding:3px;gap:2px">
-            ${["both","en","bn"].map(v=>`<button style="padding:3px 10px;border-radius:16px;border:none;font-size:10px;font-weight:bold;cursor:pointer;background:${state.lang===v?"#fff":"transparent"};color:${state.lang===v?"#1A3557":"rgba(255,255,255,.75)"}" onclick="state.lang='${v}';save();render()">${v==="both"?"EN+বাং":v.toUpperCase()}</button>`).join("")}
-          </div>
-          <button style="padding:5px 12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;font-size:11px;font-family:monospace" onclick="state.showPrint=true;render()">🖨 Print</button>
-          ${u
-            ?`<div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px">
-                <span style="font-size:14px">👤</span>
-                <span style="font-size:11px;color:#fff;font-family:monospace">${u.name.split(" ")[0]}</span>
-                <button style="background:none;border:none;color:rgba(255,255,255,.5);font-size:10px;font-family:monospace;cursor:pointer" onclick="state.user=null;save();render()">out</button>
-              </div>`
-            :`<button style="padding:6px 14px;background:rgba(255,255,255,.95);border:none;color:#1A3557;border-radius:20px;font-size:11px;font-family:monospace;font-weight:bold" onclick="state.tab='login';render()">🔐 Login</button>`
-          }
+        <!-- Login -->
+        ${u
+          ?`<div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:7px 14px;flex-shrink:0">
+              <span style="font-size:14px">👤</span>
+              <span style="font-size:12px;color:#F0F6FF;font-weight:600">${u.name.split(" ")[0]}</span>
+              <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:10px;cursor:pointer;padding:0 2px" onclick="state.user=null;save();render()">✕</button>
+            </div>`
+          :`<button style="display:flex;align-items:center;gap:7px;padding:8px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#F0F6FF;border-radius:24px;font-size:13px;font-weight:600;flex-shrink:0;white-space:nowrap" onclick="state.tab='login';render()">
+              🔐 Login
+            </button>`
+        }
+      </div>
+
+      <!-- Lang + Print Row -->
+      <div class="lang-bar">
+        <div class="lang-group">
+          ${["both","en","bn"].map(v=>`<button class="lang-opt ${state.lang===v?"active":""}" onclick="state.lang='${v}';save();render()">${v==="both"?"EN+বাংলা":v.toUpperCase()}</button>`).join("")}
         </div>
+        <button class="print-btn" onclick="state.showPrint=true;render()">🖨 Print</button>
       </div>
-      <div class="tabs">
-        ${[["greeting","👋 Greeting & PP"],["guide","📖 Guide"],["practice","🏋 Practice"],["community","💬 Community"],["notepad","📝 Notepad"]].map(([t,l])=>`<button class="tab-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">${l}</button>`).join("")}
+
+      <!-- Nav Grid -->
+      <div class="nav-grid-top">
+        ${[["greeting","👋","Greeting & PP"],["guide","📖","Guide"],["practice","🏋","Practice"]].map(([t,em,l])=>`
+        <button class="nav-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">
+          <span style="font-size:18px;flex-shrink:0">${em}</span>
+          <span style="flex:1;font-size:12px">${l}</span>
+          <span class="nav-arrow">›</span>
+        </button>`).join("")}
       </div>
+      <div class="nav-grid-bottom">
+        ${[["community","💬","Community"],["notepad","📝","Notepad"]].map(([t,em,l])=>`
+        <button class="nav-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">
+          <span style="font-size:18px;flex-shrink:0">${em}</span>
+          <span style="flex:1;font-size:12px">${l}</span>
+          <span class="nav-arrow">›</span>
+        </button>`).join("")}
+      </div>
+
     </div>
   </header>
 
