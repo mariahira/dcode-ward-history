@@ -77,19 +77,29 @@ textarea,input,select{font-family:'Inter','Noto Sans Bengali',sans-serif;font-we
 textarea:focus,input:focus,select:focus{outline:2px solid #2E8B8B;}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:#DCE8F0;border-radius:10px;}
-.header{background:#1A3255;padding:20px 16px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(15,28,50,.35);}
-.nav-grid-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;}
-.nav-grid-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.header{background:#1A3255;padding:20px 16px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(15,28,50,.35);transition:padding .25s ease;}
+.header.collapsed{padding:10px 16px;}
+.nav-grid-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;transition:all .25s ease;}
+.nav-grid-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;transition:all .25s ease;}
 .nav-btn{display:flex;align-items:center;gap:8px;padding:12px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:rgba(255,255,255,.75);font-size:13px;font-weight:500;text-align:left;width:100%;transition:all .15s;}
 .nav-btn.active{background:rgba(255,255,255,.95);border-color:transparent;color:#1A3255;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.15);}
 .nav-btn .nav-arrow{opacity:.35;font-size:14px;margin-left:auto;flex-shrink:0;}
 .nav-btn.active .nav-arrow{opacity:.5;}
-.lang-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.lang-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;transition:all .25s ease;}
 .lang-group{display:flex;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:3px;gap:2px;}
 .lang-opt{padding:5px 13px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.2px;}
 .lang-opt.active{background:#fff;color:#1A3255;}
 .lang-opt:not(.active){background:transparent;color:rgba(255,255,255,.65);}
 .print-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.75);border-radius:24px;font-size:12px;font-weight:600;}
+
+/* Collapsible sections */
+.header-collapsible{overflow:hidden;transition:max-height .25s ease, opacity .25s ease, margin .25s ease;}
+.header-collapsible.visible{max-height:300px;opacity:1;margin-bottom:0;}
+.header-collapsible.hidden{max-height:0;opacity:0;margin-bottom:0!important;pointer-events:none;}
+
+/* Compact bar shown when collapsed */
+.compact-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.compact-title{font-size:15px;font-weight:700;color:#F0F6FF;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .main{max-width:900px;margin:0 auto;padding:20px 14px 50px;}
 .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:#1A3557;color:#fff;border:1px solid #2E8B8B;padding:9px 22px;border-radius:28px;z-index:3000;font-family:monospace;font-size:12px;box-shadow:0 5px 20px rgba(0,0,0,.15);white-space:nowrap;}
 .card{background:#fff;border-radius:18px;box-shadow:0 6px 24px rgba(26,53,87,.1);overflow:hidden;margin-bottom:16px;border:1px solid #DCE8F0;}
@@ -212,59 +222,73 @@ function render(){
   ${state.toast?`<div class="toast">${state.toast}</div>`:""}
   ${state.showPrint?printModal():""}
 
-  <header class="header">
+  <header class="header" id="mainHeader">
     <div style="max-width:900px;margin:0 auto">
 
-      <!-- Brand Row -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div style="display:flex;align-items:center;gap:14px">
-          <!-- Icon -->
-          <div style="width:52px;height:52px;background:#162840;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1px solid rgba(255,255,255,.08)">⚕️</div>
-          <!-- Text -->
-          <div>
-            <div style="font-size:20px;font-weight:700;color:#F0F6FF;letter-spacing:-.4px;line-height:1.15">Dcode Ward History</div>
-            <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;font-weight:400;letter-spacing:.1px">ডিকোড ওয়ার্ড হিস্ট্রি &nbsp;·&nbsp; BD & International</div>
-          </div>
+      <!-- Compact bar (shown when scrolled) -->
+      <div id="compactBar" style="display:none;align-items:center;justify-content:space-between;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0">
+          <div style="width:32px;height:32px;background:#162840;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">⚕️</div>
+          <span style="font-size:15px;font-weight:700;color:#F0F6FF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="compactTitle">${[["greeting","👋 Greeting & PP"],["guide","📖 Guide"],["practice","🏋 Practice"],["community","💬 Community"],["notepad","📝 Notepad"],["login","🔐 Login"]].find(([t])=>t===state.tab)?.[1]||"Dcode Ward History"}</span>
         </div>
-        <!-- Login -->
         ${u
-          ?`<div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:7px 14px;flex-shrink:0">
-              <span style="font-size:14px">👤</span>
-              <span style="font-size:12px;color:#F0F6FF;font-weight:600">${u.name.split(" ")[0]}</span>
-              <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:10px;cursor:pointer;padding:0 2px" onclick="state.user=null;save();render()">✕</button>
+          ?`<div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:5px 12px;flex-shrink:0">
+              <span style="font-size:12px">👤</span><span style="font-size:11px;color:#F0F6FF;font-weight:600">${u.name.split(" ")[0]}</span>
+              <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:10px;cursor:pointer" onclick="state.user=null;save();render()">✕</button>
             </div>`
-          :`<button style="display:flex;align-items:center;gap:7px;padding:8px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#F0F6FF;border-radius:24px;font-size:13px;font-weight:600;flex-shrink:0;white-space:nowrap" onclick="state.tab='login';render()">
-              🔐 Login
-            </button>`
+          :`<button style="padding:6px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#F0F6FF;border-radius:20px;font-size:12px;font-weight:600;flex-shrink:0" onclick="state.tab='login';render()">🔐 Login</button>`
         }
       </div>
 
-      <!-- Lang + Print Row -->
-      <div class="lang-bar">
-        <div class="lang-group">
-          ${["both","en","bn"].map(v=>`<button class="lang-opt ${state.lang===v?"active":""}" onclick="state.lang='${v}';save();render()">${v==="both"?"EN+বাংলা":v.toUpperCase()}</button>`).join("")}
+      <!-- Full header (hidden when scrolled) -->
+      <div id="fullHeader" style="overflow:hidden;transition:max-height .25s ease,opacity .25s ease;max-height:500px;opacity:1">
+
+        <!-- Brand Row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:52px;height:52px;background:#162840;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1px solid rgba(255,255,255,.08)">⚕️</div>
+            <div>
+              <div style="font-size:20px;font-weight:700;color:#F0F6FF;letter-spacing:-.4px;line-height:1.15">Dcode Ward History</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;font-weight:400">ডিকোড ওয়ার্ড হিস্ট্রি &nbsp;·&nbsp; BD & International</div>
+            </div>
+          </div>
+          ${u
+            ?`<div style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:7px 14px;flex-shrink:0">
+                <span style="font-size:14px">👤</span>
+                <span style="font-size:12px;color:#F0F6FF;font-weight:600">${u.name.split(" ")[0]}</span>
+                <button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:10px;cursor:pointer;padding:0 2px" onclick="state.user=null;save();render()">✕</button>
+              </div>`
+            :`<button style="display:flex;align-items:center;gap:7px;padding:8px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#F0F6FF;border-radius:24px;font-size:13px;font-weight:600;flex-shrink:0" onclick="state.tab='login';render()">🔐 Login</button>`
+          }
         </div>
-        <button class="print-btn" onclick="state.showPrint=true;render()">🖨 Print</button>
-      </div>
 
-      <!-- Nav Grid -->
-      <div class="nav-grid-top">
-        ${[["greeting","👋","Greeting & PP"],["guide","📖","Guide"],["practice","🏋","Practice"]].map(([t,em,l])=>`
-        <button class="nav-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">
-          <span style="font-size:18px;flex-shrink:0">${em}</span>
-          <span style="flex:1;font-size:12px">${l}</span>
-          <span class="nav-arrow">›</span>
-        </button>`).join("")}
-      </div>
-      <div class="nav-grid-bottom">
-        ${[["community","💬","Community"],["notepad","📝","Notepad"]].map(([t,em,l])=>`
-        <button class="nav-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">
-          <span style="font-size:18px;flex-shrink:0">${em}</span>
-          <span style="flex:1;font-size:12px">${l}</span>
-          <span class="nav-arrow">›</span>
-        </button>`).join("")}
-      </div>
+        <!-- Lang + Print -->
+        <div class="lang-bar">
+          <div class="lang-group">
+            ${["both","en","bn"].map(v=>`<button class="lang-opt ${state.lang===v?"active":""}" onclick="state.lang='${v}';save();render()">${v==="both"?"EN+বাংলা":v.toUpperCase()}</button>`).join("")}
+          </div>
+          <button class="print-btn" onclick="state.showPrint=true;render()">🖨 Print</button>
+        </div>
 
+        <!-- Nav Grid -->
+        <div class="nav-grid-top">
+          ${[["greeting","👋","Greeting & PP"],["guide","📖","Guide"],["practice","🏋","Practice"]].map(([t,em,l])=>`
+          <button class="nav-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">
+            <span style="font-size:18px;flex-shrink:0">${em}</span>
+            <span style="flex:1;font-size:12px">${l}</span>
+            <span class="nav-arrow">›</span>
+          </button>`).join("")}
+        </div>
+        <div class="nav-grid-bottom" style="margin-top:8px">
+          ${[["community","💬","Community"],["notepad","📝","Notepad"]].map(([t,em,l])=>`
+          <button class="nav-btn ${state.tab===t?"active":""}" onclick="state.tab='${t}';render()">
+            <span style="font-size:18px;flex-shrink:0">${em}</span>
+            <span style="flex:1;font-size:12px">${l}</span>
+            <span class="nav-arrow">›</span>
+          </button>`).join("")}
+        </div>
+
+      </div><!-- end fullHeader -->
     </div>
   </header>
 
@@ -282,6 +306,49 @@ function render(){
     · Created by <span style="color:${C.navy};font-weight:bold">Maria Sultana Hira</span>
     · Always verify with your clinical supervisor
   </footer>`;
+
+  // ── COLLAPSIBLE HEADER SCROLL LOGIC ─────────────────────
+  (function(){
+    let lastY=0, collapsed=false;
+    const THRESHOLD=60;
+
+    function collapse(){
+      if(collapsed)return;
+      collapsed=true;
+      const full=document.getElementById("fullHeader");
+      const compact=document.getElementById("compactBar");
+      const header=document.getElementById("mainHeader");
+      if(!full||!compact||!header)return;
+      full.style.maxHeight="0";
+      full.style.opacity="0";
+      full.style.pointerEvents="none";
+      compact.style.display="flex";
+      header.style.padding="10px 16px";
+    }
+
+    function expand(){
+      if(!collapsed)return;
+      collapsed=false;
+      const full=document.getElementById("fullHeader");
+      const compact=document.getElementById("compactBar");
+      const header=document.getElementById("mainHeader");
+      if(!full||!compact||!header)return;
+      full.style.maxHeight="500px";
+      full.style.opacity="1";
+      full.style.pointerEvents="";
+      compact.style.display="none";
+      header.style.padding="20px 16px 16px";
+    }
+
+    window.removeEventListener("scroll",window._scrollHandler||null);
+    window._scrollHandler=function(){
+      const y=window.scrollY;
+      if(y>THRESHOLD&&y>lastY) collapse();
+      else if(y<THRESHOLD) expand();
+      lastY=y;
+    };
+    window.addEventListener("scroll",window._scrollHandler,{passive:true});
+  })();
 }
 
 // ── GREETING TAB ───────────────────────────────────────────
