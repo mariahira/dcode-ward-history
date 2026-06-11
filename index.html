@@ -764,6 +764,202 @@ loadIdeas();
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
+
+// ── PWA INSTALL ────────────────────────────────────────────
+let _installPrompt = null;
+let _installBannerShown = false;
+
+// Catch the install prompt event
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _installPrompt = e;
+  showInstallBanner();
+});
+
+// App installed — hide banner
+window.addEventListener('appinstalled', () => {
+  hideInstallBanner();
+  showToast('🎉 App installed successfully!');
+});
+
+function showInstallBanner() {
+  if (_installBannerShown) return;
+  _installBannerShown = true;
+
+  const banner = document.createElement('div');
+  banner.id = 'pwa-banner';
+  banner.style.cssText = `
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1A3255;
+    color: #fff;
+    padding: 14px 16px;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 -4px 20px rgba(0,0,0,.25);
+    animation: slideUp .3s ease;
+    font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
+  `;
+
+  banner.innerHTML = `
+    <style>
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+    </style>
+    <div style="width:40px;height:40px;background:#162840;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">⚕️</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:700;color:#fff">Install Dcode Ward History</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">Works offline · Fast · Free</div>
+    </div>
+    <button id="pwa-dismiss" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:18px;cursor:pointer;padding:4px;flex-shrink:0">✕</button>
+    <button id="pwa-install-btn" style="background:#2E8B8B;border:none;color:#fff;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap">📲 Install</button>
+  `;
+
+  document.body.appendChild(banner);
+
+  // Install button click
+  document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+    if (_installPrompt) {
+      _installPrompt.prompt();
+      const { outcome } = await _installPrompt.userChoice;
+      if (outcome === 'accepted') {
+        hideInstallBanner();
+        showToast('🎉 Installing Dcode Ward History...');
+      }
+      _installPrompt = null;
+    } else {
+      showFallbackInstall();
+    }
+  });
+
+  // Dismiss button
+  document.getElementById('pwa-dismiss').addEventListener('click', () => {
+    hideInstallBanner();
+  });
+
+  // Also add install button to footer
+  addFooterInstallBtn();
+}
+
+function hideInstallBanner() {
+  const banner = document.getElementById('pwa-banner');
+  if (banner) {
+    banner.style.animation = 'none';
+    banner.style.transform = 'translateY(100%)';
+    banner.style.transition = 'transform .3s ease';
+    setTimeout(() => banner.remove(), 300);
+  }
+}
+
+function showFallbackInstall() {
+  const modal = document.createElement('div');
+  modal.id = 'pwa-fallback';
+  modal.style.cssText = `
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 3000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 16px;
+    font-family: 'Inter', 'Noto Sans Bengali', sans-serif;
+  `;
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:20px 20px 16px 16px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 -8px 40px rgba(0,0,0,.2)">
+      <div style="background:#1A3255;padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+        <span style="color:#fff;font-weight:700;font-size:15px">📲 Install App</span>
+        <button onclick="document.getElementById('pwa-fallback').remove()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer">✕</button>
+      </div>
+      <div style="padding:20px">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:48px;margin-bottom:8px">⚕️</div>
+          <div style="font-size:16px;font-weight:700;color:#1E2D3D;margin-bottom:4px">Dcode Ward History</div>
+          <div style="font-size:12px;color:#6B8299">Install as a mobile app in seconds</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px;background:#F4F8FC;border-radius:12px;padding:12px 14px">
+            <span style="font-size:22px;flex-shrink:0">1️⃣</span>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1E2D3D">Open in Chrome</div>
+              <div style="font-size:12px;color:#6B8299">Make sure you're using Chrome browser</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;background:#F4F8FC;border-radius:12px;padding:12px 14px">
+            <span style="font-size:22px;flex-shrink:0">2️⃣</span>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1E2D3D">Tap menu <span style="background:#1A3255;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px">⋮</span></div>
+              <div style="font-size:12px;color:#6B8299">Top right corner of Chrome</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;background:#F4F8FC;border-radius:12px;padding:12px 14px">
+            <span style="font-size:22px;flex-shrink:0">3️⃣</span>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1E2D3D">Tap "Add to Home Screen"</div>
+              <div style="font-size:12px;color:#6B8299">Then tap "Add" to confirm</div>
+            </div>
+          </div>
+        </div>
+        <button onclick="document.getElementById('pwa-fallback').remove()" style="width:100%;margin-top:20px;padding:13px;background:#1A3255;color:#fff;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer">Got it ✓</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function addFooterInstallBtn() {
+  // Add install button to greeting tab when visible
+  const checkAndAdd = () => {
+    const footer = document.querySelector('.footer');
+    if (footer && !document.getElementById('footer-install-btn')) {
+      const btn = document.createElement('div');
+      btn.id = 'footer-install-btn';
+      btn.style.cssText = 'padding:12px 16px;background:#F4F8FC;border-top:1px solid #E8EEF4;text-align:center;';
+      btn.innerHTML = `
+        <button onclick="window._triggerInstall()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#1A3255;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">
+          📲 Install as Mobile App
+        </button>
+      `;
+      footer.parentNode.insertBefore(btn, footer);
+    }
+  };
+  setTimeout(checkAndAdd, 500);
+}
+
+// Global trigger for install
+window._triggerInstall = function() {
+  if (_installPrompt) {
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(({outcome}) => {
+      if (outcome === 'accepted') showToast('🎉 Installing...');
+      _installPrompt = null;
+    });
+  } else {
+    showFallbackInstall();
+  }
+};
+
+// Show install hint on greeting page for first-time visitors
+setTimeout(() => {
+  if (!_installBannerShown && !window.matchMedia('(display-mode: standalone)').matches) {
+    const isFirstVisit = !localStorage.getItem('visited');
+    if (isFirstVisit) {
+      localStorage.setItem('visited', '1');
+      // Show subtle hint after 3 seconds
+      setTimeout(() => {
+        if (!_installPrompt) {
+          addFooterInstallBtn();
+        }
+      }, 3000);
+    }
+  }
+}, 1000);
 </script>
 </body>
 </html>
